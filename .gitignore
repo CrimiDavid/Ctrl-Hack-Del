@@ -2,4 +2,4 @@ backend/venv
 .env
 .cxncatignore
 output.txt
-backend/CHD/api/__pycache__
+backend/CHD/api/__pycache__/
