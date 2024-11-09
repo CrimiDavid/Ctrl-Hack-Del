@@ -1,12 +1,18 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import generics
+from .models import Community
+from .serializers import CommunitySerializer
 
 
 # Create your views here.
 
 
-class Test(APIView):
+class CommunityView(generics.ListCreateAPIView):
 
-    def get(self, request): 
-        return Response("in")
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer
+
+
+# class FindCommunityByNameView(generics.)    
