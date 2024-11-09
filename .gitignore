@@ -1,2 +1,3 @@
 backend/venv
+.env
 backend/CHD/api/__pycache__
