@@ -8,6 +8,7 @@ import { H3, H4 } from '~/components/ui/typography';
 import { Car, SunIcon } from 'lucide-react-native'
 import { useColorScheme } from '~/lib/useColorScheme';
 import { useUser } from '~/lib/context/userContext';
+import SetAddress from './SetAddress';
 
 interface Event {
   name: string;

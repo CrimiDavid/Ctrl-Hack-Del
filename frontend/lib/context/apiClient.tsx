@@ -11,15 +11,15 @@ const apiClient = axios.create({
 export default apiClient;
 
 export const setUserAddress = async () => {
-    
+
 }
 
 export const getUserLocation = async () => {
 
 }
 
-export const setUserLocation = async () => {
-    
+export const setUserLocation = async (location: UserLocation) => {
+    console.log(location)
 }
 
 export const getCommunityPins = async () => {
@@ -27,6 +27,26 @@ export const getCommunityPins = async () => {
 }
 
 export const getCommunityPin = async () => {
+
+}
+
+export const getWeather = async () => {
+
+}
+
+export const getCommunityEvents = async () => {
+
+}
+
+export const getCommunityEvent = async () => {
+
+}
+
+export const getCommunities = async () => {
+
+}
+
+export const getCommunity = async () => {
 
 }
 
