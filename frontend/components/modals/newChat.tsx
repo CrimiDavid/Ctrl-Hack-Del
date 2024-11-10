@@ -54,8 +54,8 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
         setError('');
         try {
             const response = await axios.get(`http://161.35.248.173:8000/api/listUsers/${id}/`);
-            const chatsData = response.data.map((user: { first_name: string }, index: number) => ({
-                id: index.toString(),
+            const chatsData = response.data.map((user: { first_name: string, id: number }) => ({
+                id: user.id,
                 first_name: user.first_name
             }));
             setChats(chatsData);
@@ -86,9 +86,10 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
         const data = {
             conversation_name: name,
             from_user_id: id, // Replace with the actual user ID
-            to_user_ids: selectedUsersList.map(user => user.id),
+            to_user_ids: selectedUsersList.map(user => parseInt(user.id)),
             content: content,
         };
+
         // Make the POST request using Axios
         axios.post('http://161.35.248.173:8000/api/createConversation/', data)
             .then(response => {
