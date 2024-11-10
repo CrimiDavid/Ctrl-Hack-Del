@@ -98,8 +98,6 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
                 console.error('Error creating conversation:', error);
                 // Handle error appropriately
             });
-        // Here you would handle the creation of a new conversation using name and content
-        navigation.navigate('Chat' as never);
         onClose();
     };
 
