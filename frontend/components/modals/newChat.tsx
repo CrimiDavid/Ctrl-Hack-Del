@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     FlatList,
-    ActivityIndicator
+    ActivityIndicator,
+    TextInput  // Import TextInput
 } from 'react-native';
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -33,11 +34,15 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
     const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [name, setName] = useState<string>('');       // Add name state
+    const [content, setContent] = useState<string>(''); // Add content state
 
     useEffect(() => {
         if (visible) {
             fetchChats();
             setSelectedUsers({}); // Reset selections when modal opens
+            setName('');          // Reset name when modal opens
+            setContent('');       // Reset content when modal opens
         }
     }, [visible]);
 
@@ -73,6 +78,27 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
     const handleStartConversation = () => {
         const selectedUsersList = chats.filter(chat => selectedUsers[chat.id]);
         console.log('Starting conversation with:', selectedUsersList);
+        console.log('Conversation Name:', name);
+        console.log('Content:', content);
+        const data = {
+            conversation_name: name,
+            from_user_id: 1, // Replace with the actual user ID
+            to_user_ids: selectedUsersList.map(user => user.id),
+            content: content,
+        };
+        // Make the POST request using Axios
+        axios.post('http://161.35.248.173:8000/api/createConversation/', data)
+            .then(response => {
+                console.log('Conversation created:', response.data);
+                // Navigate to the 'Chat' screen upon success
+                navigation.navigate('Conversations' as never);
+                onClose();
+            })
+            .catch(error => {
+                console.error('Error creating conversation:', error);
+                // Handle error appropriately
+            });
+        // Here you would handle the creation of a new conversation using name and content
         navigation.navigate('Chat' as never);
         onClose();
     };
@@ -104,6 +130,25 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <Text style={styles.modalTitle}>New Conversation</Text>
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Conversation Name"
+                        placeholderTextColor="grey"
+                        value={name}
+                        onChangeText={setName}
+
+                    />
+
+                    <TextInput
+                        style={styles.textArea}
+                        placeholder="Content"
+                        placeholderTextColor="grey"
+                        value={content}
+                        onChangeText={setContent}
+                        multiline={true}
+                    />
+
                     {loading ? (
                         <ActivityIndicator size="large" color="#0000ff" />
                     ) : error ? (
@@ -115,6 +160,7 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
                         </View>
                     ) : (
                         <>
+                            <Text className="flex justify-end ">Community Members:</Text>
                             <FlatList
                                 data={chats}
                                 renderItem={renderChatItem}
@@ -181,6 +227,25 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         right: 10
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 8,
+        width: '100%',
+        paddingHorizontal: 10,
+        marginBottom: 15,
+    },
+    textArea: {
+        height: 80,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 8,
+        width: '100%',
+        paddingHorizontal: 10,
+        marginBottom: 15,
+        textAlignVertical: 'top',
     },
     chatList: {
         width: '100%',
