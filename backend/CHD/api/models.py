@@ -50,4 +50,4 @@ class Event(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     users = models.ManyToManyField(User, related_name="event")
-    
+    location_id = models.ForeignKey(Location, on_delete=models.CASCADE)

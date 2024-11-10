@@ -140,7 +140,7 @@ class SetLocationView(generics.ListAPIView):
         
         return Response(status=status.HTTP_201_CREATED)
         
-#Auth Views
+
 class LoginView(generics.ListAPIView):
 
     def post(self, request, *args, **kwargs):
@@ -162,3 +162,5 @@ class LoginView(generics.ListAPIView):
         
         # If authentication fails
         return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
+
+
