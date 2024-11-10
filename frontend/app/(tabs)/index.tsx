@@ -54,7 +54,7 @@ export default function Map({ refresh }: { refresh: boolean }) {
   const initialLocation = user?.location;
   // Create a reference to the map view
   const mapRef = React.useRef<MapView>(null);
-
+  console.log(refresh)
   const [communityPins, setCommunityPins] = React.useState<CommunityEventPin[]>([]);
   const [communityHouses, setCommunityHouses] = React.useState<CommunityHousePin[]>([]);
   const [selectedPin, setSelectedPin] = React.useState<CommunityEventPin | CommunityHousePin | null>(null);
@@ -64,11 +64,10 @@ export default function Map({ refresh }: { refresh: boolean }) {
   useEffect(() => {
     if (user?.location) {
       // Fetch community pins and combine with user pin
-      initializeUser();
       refreshCommunityEvents();
       refreshUserLocation();
     }
-  }, [userId, refresh]); // Depend on user location
+  }, [user?.location, refresh]); // Depend on user location
 
   const refreshCommunityEvents = () => {
     getCommunityEventPins()

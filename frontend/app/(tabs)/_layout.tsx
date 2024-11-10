@@ -54,7 +54,7 @@ export default function TabLayout() {
             ),
           }}
         >
-          {props => <Map {...props} refresh={refresh} />}
+          {props => <Map {...props} refresh={refreshMap} />}
         </Tabs.Screen>
         <Tabs.Screen
           name="messages"

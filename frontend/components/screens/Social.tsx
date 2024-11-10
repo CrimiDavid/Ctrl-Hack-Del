@@ -32,7 +32,7 @@ export default function Social({ refresh }: { refresh: boolean }) {
         <Card className="mb-4">
           <CardHeader>
             <CardTitle>
-              <Text className='mr-8'>Events Near You:</Text>
+              Events Available To Join:
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -56,7 +56,7 @@ export default function Social({ refresh }: { refresh: boolean }) {
                 </ScrollView>
               ) : (
                 <View className="flex-1 justify-center items-center">
-                  <Text className="text-muted-foreground">No events found nearby</Text>
+                  <Text className="text-muted-foreground">No joinable events found nearby</Text>
                 </View>
               )}
             </View>

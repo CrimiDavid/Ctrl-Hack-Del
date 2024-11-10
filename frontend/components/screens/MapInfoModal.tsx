@@ -28,7 +28,7 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
   if (!data) return null;
   const { userId } = useAuth();
   const renderEventContent = (event: CommunityEventPin) => {
-    console.log(event.date)
+    console.log(event)
     const handleJoinEvent = async () => {
       try {
         // Call your API to join the event
@@ -43,7 +43,7 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
     };
   
     return (
-      <View className="space-y-4">
+      <View>
         <Card>
           <CardHeader>
             <CardTitle>{event.event_name}</CardTitle>
@@ -52,25 +52,18 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
             </CardDescription>
           </CardHeader>
           
-          <CardContent className="space-y-4">
+          <CardContent>
             {/* Date and Time */}
-            <View className="flex-row items-center space-x-2">
-              <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center">
-                <Calendar className="h-4 w-4 text-primary" />
-              </View>
+                
               <View>
                 <Text className="font-medium">Date & Time</Text>
                 <Text className="text-muted-foreground">
-                  {format(new Date(event.date), 'PPP')}
+                  {format(event.date ? new Date(event.date) : new Date(), 'PPP')}
                 </Text>
               </View>
-            </View>
   
             {/* Location */}
             <View className="flex-row items-center space-x-2">
-              <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center">
-                <MapPin className="h-4 w-4 text-primary" />
-              </View>
               <View>
                 <Text className="font-medium">Location</Text>
                 <Text className="text-muted-foreground">
@@ -90,7 +83,6 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
             {/* Attendees */}
             <View>
               <Text className="font-medium mb-2">Attendees ({event.users.length})</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View className="flex-row space-x-2">
                   {event.users.map((user, index) => (
                     <View 
@@ -101,7 +93,6 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
                     </View>
                   ))}
                 </View>
-              </ScrollView>
             </View>
           </CardContent>
   
@@ -110,7 +101,6 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
               className="w-full"
               onPress={handleJoinEvent}
             >
-              <Plus className="w-4 h-4 mr-2" />
               <Text className="text-primary-foreground">Join Event</Text>
             </Button>
           </CardFooter>
@@ -138,7 +128,6 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogOverlay className="bg-black/40" />
         <DialogContent className="p-6 bg-background">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">

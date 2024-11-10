@@ -317,6 +317,7 @@ class GetAllEventLocationsView(generics.ListAPIView):
             event_locations.append({
                 "event_id": event.id,
                 "event_name": event.name,
+                "date": event.date,
                 "description": event.description,
                 "owner_first_name": owner.first_name,
                 "owner_last_name": owner.last_name,
