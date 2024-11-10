@@ -235,6 +235,33 @@ class GetUserInfoView(generics.ListAPIView):
         # Return the custom response with conversations data
         return Response(user_info, status=status.HTTP_200_OK)
     
+class JoinEventView(generics.CreateAPIView):
+    
+    def post(self, results, *args, **kwargs):
+        user_id = results.data.get("user_id")
+        event_id = results.data.get("event_id")
+        
+        if not user_id or not event_id:
+            return Response({"error": "one or more missing fields"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user_id = User.objects.get(id=user_id)
+            event = Event.objects.get(id=event_id)
+        except (Event.DoesNotExist, User.DoesNotExist):
+            return Response({"error": "Invalid event or user_id"},
+                            status=status.HTTP_400_BAD_REQUEST) 
+            
+        event.users.add(user_id)
+        
+        return Response({"message": "User added to event successfully"},
+                        status=status.HTTP_200_OK)
+        
+        
+        
+        
+        
+        
+    
 
 
 class GetAvailableEventsView(generics.ListAPIView):
