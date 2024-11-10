@@ -163,4 +163,8 @@ class LoginView(generics.ListAPIView):
         return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CreateEventView(generics.CreateAPIView):
+# class CreateEventView(generics.CreateAPIView):
+    
+#     def get_queryset(self):
+#         user_id = self.kwargs['id']
+#         location_id
