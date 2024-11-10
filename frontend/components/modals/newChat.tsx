@@ -82,7 +82,7 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
         console.log('Content:', content);
         const data = {
             conversation_name: name,
-            from_user_id: 1, // Replace with the actual user ID
+            from_user_id: "1", // Replace with the actual user ID
             to_user_ids: selectedUsersList.map(user => user.id),
             content: content,
         };
