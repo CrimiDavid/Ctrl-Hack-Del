@@ -1,13 +1,16 @@
 import React from 'react';
+import "react-native-get-random-values"
 import { FontAwesome } from '@expo/vector-icons';
 import { Settings } from 'lucide-react-native'
 import { useColorScheme } from '~/lib/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useAuth } from '~/lib/context/authContext';
+import { Redirect } from 'expo-router';
 import Map from './index';
 import Messages from './messages';
 import Profile from './profile';
-import "react-native-get-random-values"
+import Social from './social';
 
 const Tabs = createBottomTabNavigator();
 
@@ -15,6 +18,12 @@ export default function TabLayout() {
   
   const navigation = useNavigation();
   const { colorScheme } = useColorScheme();
+  const { userId } = useAuth();
+
+  // If no token, redirect to auth
+  if (!userId) {
+    return <Redirect href="/auth/login" />;
+  }
 
   return (
       <Tabs.Navigator initialRouteName="map">
@@ -37,6 +46,16 @@ export default function TabLayout() {
             ),
           }}
           component={Messages}
+        />
+        <Tabs.Screen
+          name="social"
+          options={{
+            title: 'Social',
+            tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="users" size={size} color={color} />
+            ),
+          }}
+          component={Social}
         />
         <Tabs.Screen
           name="profile"

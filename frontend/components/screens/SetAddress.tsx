@@ -8,10 +8,6 @@ import { Button } from '~/components/ui/button';
 import { setUserLocation } from '~/lib/context/apiClient';
 import { cn } from '~/lib/utils';
 
-export interface SetAddressProps {
-    onLocationUpdate: () => void;
-}
-
 export default function SetAddress({ onLocationUpdate }: SetAddressProps) {
     const { isDarkColorScheme } = useColorScheme();
     

@@ -22,3 +22,31 @@ interface UserContextType {
     updateUser: (data: Partial<UserState>) => void;
     initializeLocation: () => Promise<void>;
 }
+
+interface AuthState {
+    userId: string | null;
+    isLoading: boolean;
+}
+  
+interface AuthContextType {
+    userId: string | null;
+    isLoading: boolean;
+    signIn: (email: string, password: string) => Promise<void>;
+    signUp: (name: string, email: string, password: string) => Promise<void>;
+    signOut: () => Promise<void>;
+}
+
+interface MapEvent {
+    name: string;
+    date: string;
+    address: string;
+}
+  
+interface MapCommunity {
+    community: string;
+    memberCount: number;
+}
+
+interface SetAddressProps {
+    onLocationUpdate: () => void;
+}

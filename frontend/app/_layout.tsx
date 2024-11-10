@@ -9,9 +9,9 @@ import { Platform } from 'react-native';
 import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
-import { ThemeToggle } from '~/components/ThemeToggle';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
 import { UserProvider } from '~/lib/context/userContext';
+import { AuthProvider } from '~/lib/context/authContext';
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -65,14 +65,17 @@ export default function RootLayout() {
   }
 
   return (
-    <UserProvider>
-      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-        <Stack>
-          <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-        </Stack>
-        <PortalHost />
-      </ThemeProvider>
-    </UserProvider>
+    <AuthProvider>
+      <UserProvider>
+        <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+          <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+          <Stack>
+            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+            <Stack.Screen name='auth' options={{ headerShown: false }} />
+          </Stack>
+          <PortalHost />
+        </ThemeProvider>
+      </UserProvider>
+    </AuthProvider>
   );
 }

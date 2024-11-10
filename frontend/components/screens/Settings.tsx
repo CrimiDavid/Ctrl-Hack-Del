@@ -1,24 +1,32 @@
 import React from 'react';
 import { View, Pressable } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ParamListBase, RouteProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { ChevronRight } from 'lucide-react-native';
 import { Card } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Switch } from '~/components/ui/switch';
 import { useColorScheme } from '~/lib/useColorScheme';
-import SetAddress, { SetAddressProps } from './SetAddress';
+import { useAuth } from '~/lib/context/authContext';
+import SetAddress from './SetAddress';
 
 const Stack = createNativeStackNavigator();
 
 function Settings() {
+  // Navigation
   const navigation = useNavigation();
+
+  // Theme
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
+
+  // Hooks
+  const { signOut } = useAuth();
 
   return (
     <View className="flex-1 bg-background p-4">
       <Card>
         <View className="divide-y divide-border">
+
           {/* Theme Toggle */}
           <View className="flex-row items-center justify-between p-4">
             <Text className="text-base">Dark Theme</Text>
@@ -34,6 +42,15 @@ function Settings() {
             className="flex-row items-center justify-between p-4 active:bg-muted/50"
           >
             <Text className="text-base">Set Address</Text>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </Pressable>
+
+          {/* Sign Out */}
+          <Pressable
+            onPress={signOut}
+            className="flex-row items-center justify-between p-4 active:bg-muted/50"
+          > 
+            <Text className="text-base text-destructive">Sign Out</Text>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </Pressable>
         </View>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import { useAuth } from './authContext';
 
 // Create the global context that will store the user state within the app
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -26,31 +27,30 @@ const MOCK_USER_DATA: UserState = {
 };
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
+  // Initialize the user state with null and no errors
   const [user, setUser] = useState<UserState | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
+  // Auth hook
+  const { userId } = useAuth();
+
   const initializeLocation = async () => {
     if (!user) return;
-
+    if (!userId) return;
     try {
       // Set loading state to true to indicate location is loading
       setUser(prev => prev ? { ...prev, isLoadingLocation: true } : null);
-      
       // Request location permissions from the device
       const { status } = await Location.requestForegroundPermissionsAsync();
-
       // Throw error to be caught in the catch block
       if (status !== 'granted') throw new Error('Location permission denied');
-
       // Get current position
       const location = await Location.getCurrentPositionAsync({});
-      
       // Get location details (reverse geocoding)
       const [geocode] = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-
       // Create user location object
       const userLocation: UserLocation = {
         latitude: location.coords.latitude,
@@ -61,7 +61,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         region: geocode?.region,
         country: geocode?.country,
       };
-
       // Update user with location
       setUser(prev => prev ? {
         ...prev,
@@ -114,7 +113,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
     // Initialize user data
     initializeUser();
-  }, []);
+  }, [userId]);
 
   return (
     <UserContext.Provider value={{ user, error, updateUser, initializeLocation }}>
