@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Address, User
+from .models import Location, Address, User, Message, Conversation
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,11 +7,16 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "first_name", "last_name"]
 
 
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ["content", "from_user_id", "to_conversation_id", "timestamp"]
 
 
-
-
-
+class ConversationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Conversation
+        fields = ["name", "users"]
 
 
 class LocationSerializer(serializers.ModelSerializer):

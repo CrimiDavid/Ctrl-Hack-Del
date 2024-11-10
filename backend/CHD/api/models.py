@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Conversations(models.Model):
+class Conversation(models.Model):
     name = models.CharField(max_length=200)
     users = models.ManyToManyField(User, related_name="conversations")
 
@@ -11,10 +11,10 @@ class Conversations(models.Model):
         return f"Conversation: {self.name}"
 
 
-class Messages(models.Model):
+class Message(models.Model):
     content = models.TextField()
-    from_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    to_id = models.ForeignKey(Conversations, on_delete=models.CASCADE)
+    from_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    to_conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     timestamp = models.TimeField(auto_now_add=True)
 
     def __str__(self):
