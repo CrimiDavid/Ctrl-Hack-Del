@@ -19,16 +19,7 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message content: {self.content}"
-
-
-
-
-
-
-
-
-
-
+    
 
 class Location(models.Model):
     latitude = models.FloatField()
