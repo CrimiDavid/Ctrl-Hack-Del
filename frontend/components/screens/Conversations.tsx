@@ -12,6 +12,7 @@
     } from 'react-native';
     import { FontAwesome } from "@expo/vector-icons";
     import NewConversationModal from '../modals/newChat';
+    import { useColorScheme } from '~/lib/useColorScheme';
     import axios from "axios";
     import { useNavigation } from '@react-navigation/native';
     import asyncStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
@@ -27,6 +28,7 @@
     const ITEMS_PER_PAGE = 10;
 
     export default function Conversations() {
+        const { colorScheme } = useColorScheme();
         const {user} = useUser()
         const id = user?.id;
         console.log(id)
@@ -118,13 +120,13 @@
                                 style={styles.refreshButton}
                                 onPress={fetchConversations}
                             >
-                                <FontAwesome name="refresh" size={24} color="white" />
+                                <FontAwesome name="refresh" size={24} color={colorScheme === 'dark' ? 'white' : 'black'} />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles.addButton}
                                 onPress={() => setModalVisible(true)}
                             >
-                                <FontAwesome name="plus" size={24} color="white" />
+                                <FontAwesome name="plus" size={24} color={colorScheme === 'dark' ? 'white' : 'black'} />
                             </TouchableOpacity>
                         </View>
                     </View>
