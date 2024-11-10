@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
-from .models import Location, Address, User, Message, Conversation
-from .serializers import LocationSerializer, AddressSerializer, UserSerializer, MessageSerializer, ConversationSerializer
+from .models import Location, User, Message, Conversation, UserRefs, Event
+from .serializers import UserSerializer, MessageSerializer, ConversationSerializer
 from django.contrib.auth import authenticate
 
 
@@ -115,28 +115,35 @@ class CreateConversationView(generics.CreateAPIView):
         message = Message(content=content, from_user_id=from_user, to_conversation_id=conversation)
         message.save()
 
-        # Serialize and return the response
-        serializer = self.get_serializer(message)
+        return Response(status=status.HTTP_201_CREATED)        
         
-#Address and Location Views
-class SetAddressView(generics.ListAPIView):
+
+class SetUserLocationView(generics.ListAPIView):
     
     def post(self, request, *args, **kwargs):
+        user_id = request.data.get("user_id")
         city = request.data.get("city")
         country = request.data.get("country")
-        postal_code = request.data.get("postal_code")
+        region = request.data.get("region")
+        latitude = request.data.get("latitude")
+        longitude = request.data.get("longitude")
+        latitude_delta = request.data.get("latitude_delta")
+        longitude_delta = request.data.get("longitude_delta")
         
         
-        if not city or not country or not postal_code:
-                return Response({"error": "city, country, and postal_code are requied fields."},
+        if not user_id or not city or not country or not region or not latitude or not longitude or not latitude_delta or not longitude_delta:
+            return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
                 
-        address = Address(city=city, country=country, postal_code=postal_code)
-        address.save()
+        location = Location(city=city, country=country, region=region, latitude=latitude, longitude=longitude, latitude_delta=latitude_delta, longitude_delta=longitude_delta)
+        location.save()
+        
+        userRefs = UserRefs(user_id=user_id, location_id=location)
+        userRefs.save()
         
         return Response(status=status.HTTP_201_CREATED)
         
-#Auth Views
+
 class LoginView(generics.ListAPIView):
 
     def post(self, request, *args, **kwargs):
@@ -158,3 +165,17 @@ class LoginView(generics.ListAPIView):
         
         # If authentication fails
         return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
+    
+class CreateEventView(generics.CreateAPIView):
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.data.get("user_id")
+        event_name = request.data.get("event_name")
+        description = request.data.get("description")
+        location_id = request.data.get("location_id")
+
+        if not user_id or not event_name or not description or not location_id:
+            return Response({"error": "one or more missing fields"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        event = Event.objects.create(owner_id=user_id, name=event_name, description=description, location_id=location_id)

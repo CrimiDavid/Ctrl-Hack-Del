@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Address, User, Message, Conversation
+from .models import Location, User, Message, Conversation
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,9 +23,3 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = ["latitude", "longitude", "latitudeDelta", "longitudeDelta"]
-
-
-class AddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Address
-        fields = ["city", "country", "postal_code"]

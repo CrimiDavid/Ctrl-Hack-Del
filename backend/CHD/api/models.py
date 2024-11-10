@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class Conversation(models.Model):
     name = models.CharField(max_length=200)
-    users = models.ManyToManyField(User, related_name="conversations")
+    users = models.ManyToManyField(User, related_name="conversation")
 
     def __str__(self):
         return f"Conversation: {self.name}"
@@ -15,13 +15,16 @@ class Message(models.Model):
     content = models.TextField()
     from_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     to_conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE)
-    timestamp = models.TimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Message content: {self.content}"
     
 
 class Location(models.Model):
+    city = models.CharField(max_length=200, default="")
+    country = models.CharField(max_length=200, default="")
+    region = models.CharField(max_length=200, default="")
     latitude = models.FloatField()
     longitude = models.FloatField()
     latitude_delta = models.FloatField()
@@ -31,16 +34,14 @@ class Location(models.Model):
         return f"Location: {self.latitude}, {self.longitude}"
 
 
-class Address(models.Model):
-    city = models.CharField(max_length=200)
-    country = models.CharField(max_length=200)
-    postal_code = models.CharField(max_length=200)
-
-    def __str__(self):
-        return f"Address: {self.postal_code}"
-    
-
 class UserRefs(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
-    address_id = models.ForeignKey(Address, on_delete=models.CASCADE)
+
+
+class Event(models.Model):
+    owner_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_events")
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    users = models.ManyToManyField(User, related_name="event")
+    location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
