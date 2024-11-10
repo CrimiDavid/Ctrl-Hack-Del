@@ -18,7 +18,7 @@ interface NewConversationModalProps {
 
 interface Chat {
     id: string;
-    username: string;
+    first_name: string;
 }
 
 export default function NewConversationModal({ visible, onClose }: NewConversationModalProps) {
@@ -36,10 +36,10 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
         setLoading(true);
         setError('');
         try {
-            const response = await axios.get('http://161.35.248.173:8000/api/listUsers/');
-            const chatsData = response.data.map((user: { username: string }, index: number) => ({
+            const response = await axios.get('http://161.35.248.173:8000/api/listUsers/1/');
+            const chatsData = response.data.map((user: { first_name: string }, index: number) => ({
                 id: index.toString(),
-                username: user.username
+                first_name: user.first_name
             }));
             setChats(chatsData);
         } catch (err) {
@@ -58,7 +58,7 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
                 onClose();
             }}
         >
-            <Text style={styles.chatTitle}>{item.username}</Text>
+            <Text style={styles.chatTitle}>{item.first_name}</Text>
             <FontAwesome name="angle-right" size={20} color="#666" />
         </TouchableOpacity>
     );
