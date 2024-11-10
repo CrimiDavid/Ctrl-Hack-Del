@@ -187,10 +187,9 @@ class CreateEventView(generics.CreateAPIView):
         country = request.data.get("country")
         latitude = request.data.get("latitude")
         longitude = request.data.get("longitude")
-        latitude_delta = request.data.get("latitude_delta")
-        longitude_delta = request.data.get("longitude_delta")
 
-        if not owner_id or not date or not event_name or not description or not city or not region or not country or not latitude or not longitude or not latitude_delta or not longitude_delta:
+
+        if not owner_id or not date or not event_name or not description or not city or not region or not country or not latitude or not longitude:
             return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -200,7 +199,7 @@ class CreateEventView(generics.CreateAPIView):
                             status=status.HTTP_400_BAD_REQUEST) 
         
         date = datetime.fromisoformat(date.replace("Z", "+00:00"))
-        location = Location(city=city, country=country, region=region, latitude=latitude, longitude=longitude, latitude_delta=latitude_delta, longitude_delta=longitude_delta)
+        location = Location(city=city, country=country, region=region, latitude=latitude, longitude=longitude, latitude_delta=0, longitude_delta=0)
         location.save()
         event = Event.objects.create(owner_id=owner_id, date=date, name=event_name, description=description, location_id=location)
 
@@ -297,7 +296,7 @@ class GetAvailableEventsView(generics.ListAPIView):
                 "name": event.name,
                 "description": event.description,
                 "date": event.date,
-                "users": event.users.all(),
+                "users": [atendee.first_name for atendee in event.users.all()],
                 "city": location.city,
                 "region": location.region,
                 "country": location.country,
@@ -305,19 +304,23 @@ class GetAvailableEventsView(generics.ListAPIView):
 
         return Response(events_info, status=status.HTTP_200_OK)
 
-class GetAllLocations(generics.ListAPIView):
-    
-    # def get_queryset(self):
-    #     user_id = self.kwargs['id']
-    #     return Event.objects.all()
+class GetAllEventLocationsView(generics.ListAPIView):
+    queryset = ""
     
     def list(self, request, *args, **kwargs):
         events = Event.objects.all()
         
+        event_locations = []
         for event in events:
             location = Location.objects.get(id=event.location_id.id)
-            events_location_info = {
+            owner = User.objects.get(id=event.owner_id.id)
+            event_locations.append({
+                "event_id": event.id,
                 "event_name": event.name,
+                "description": event.description,
+                "owner_first_name": owner.first_name,
+                "owner_last_name": owner.last_name,
+                "users": [atendee.first_name for atendee in event.users.all()],
                 "city": location.city,
                 "country": location.country,
                 "region": location.region,
@@ -325,14 +328,43 @@ class GetAllLocations(generics.ListAPIView):
                 "longiitude": location.longitude,
                 "latitude_delta": location.latitude_delta,
                 "longitude_delta": location.longitude_delta
-            }
-            print(events_location_info)
+            })
         
-        return Response(events_location_info)
+        return Response(event_locations, status=status.HTTP_200_OK)    
+
+
+class GetAllUserLocationsView(generics.ListAPIView):
+
+    def get_queryset(self):
+        user_id = self.kwargs['id']
+        return User.objects.exclude(id=user_id)
     
-    # def get_queryset2(self):
-    # user_id = self.kwargs['id']
-    # return Event.objects.exclude(users__id=user_id)
+    def list(self, request, *args, **kwargs):
+        users = self.get_queryset()
+
+        user_locations = []
+        for user in users:
+            
+            userRef = UserRefs.objects.filter(user_id=user.id).first()
+            if not userRef: # the user does not have an assigned location
+                return Response({"error":"There is a user who is not assigned a home."}, status=status.HTTP_400_BAD_REQUEST)
+
+            location = Location.objects.get(id=userRef.location_id.id)
+
+            user_locations.append({
+                "user_id": user.id,
+                "owner_first_name": user.first_name,
+                "owner_last_name": user.last_name,
+                "city": location.city,
+                "country": location.country,
+                "region": location.region,
+                "latitude": location.latitude,
+                "longiitude": location.longitude,
+                "latitude_delta": location.latitude_delta,
+                "longitude_delta": location.longitude_delta
+            })
+
+        return Response(user_locations, status=status.HTTP_200_OK)
     
     # def list2(self, request, *args, **kwargs):
     #     user_refs = self.get_queryset2()

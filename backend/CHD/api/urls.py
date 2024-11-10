@@ -14,5 +14,6 @@ urlpatterns = [
     path('getUserInfo/<str:id>/', views.GetUserInfoView.as_view(), name=''),
     path('getAvailableEvents/<str:id>/', views.GetAvailableEventsView.as_view(), name=''),
     path('joinEvent/', views.JoinEventView.as_view(), name='get_user_info'),
-    path('getAllLocations/<str:id/', views.GetAllLocationsView.as_view(), name='get_user_info')
+    path('getAllEventLocations/', views.GetAllEventLocationsView.as_view(), name=''),
+    path('getAllUserLocations/<str:id>/', views.GetAllUserLocationsView.as_view(), name='')
 ]
