@@ -206,7 +206,7 @@ class CreateEventView(generics.CreateAPIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-class getUserInfoView(generics.ListAPIView):
+class GetUserInfoView(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.kwargs['id']
