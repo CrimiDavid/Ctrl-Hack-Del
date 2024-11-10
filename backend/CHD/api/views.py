@@ -115,8 +115,7 @@ class CreateConversationView(generics.CreateAPIView):
         message = Message(content=content, from_user_id=from_user, to_conversation_id=conversation)
         message.save()
 
-        # Serialize and return the response
-        serializer = self.get_serializer(message)
+        return Response(status=status.HTTP_201_CREATED)        
         
 
 class SetLocationView(generics.ListAPIView):
@@ -164,3 +163,4 @@ class LoginView(generics.ListAPIView):
         return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CreateEventView(generics.CreateAPIView):
