@@ -84,7 +84,6 @@ class LoadConversationsView(generics.ListAPIView):
         return Response(conversations_data, status=status.HTTP_200_OK)
 
 class CreateConversationView(generics.CreateAPIView):
-    serializer_class = MessageSerializer
     
     def post(self, request, *args, **kwargs):
         content = request.data.get("content")
@@ -118,9 +117,26 @@ class CreateConversationView(generics.CreateAPIView):
 
         # Serialize and return the response
         serializer = self.get_serializer(message)
+        
+#Address and Location Views
+class SetAddressView(generics.ListAPIView):
+    
+    def post(self, request, *args, **kwargs):
+        city = request.data.get("city")
+        country = request.data.get("country")
+        postal_code = request.data.get("postal_code")
+        
+        
+        if not city or not country or not postal_code:
+                return Response({"error": "city, country, and postal_code are requied fields."},
+                            status=status.HTTP_400_BAD_REQUEST)
+                
+        address = Address(city=city, country=country, postal_code=postal_code)
+        address.save()
+        
         return Response(status=status.HTTP_201_CREATED)
         
-
+#Auth Views
 class LoginView(generics.ListAPIView):
 
     def post(self, request, *args, **kwargs):
