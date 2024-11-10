@@ -53,3 +53,36 @@ class GetConversationMessagesView(generics.ListAPIView):
         conversation_id = self.kwargs['id']
         return Message.objects.filter(to_conversation_id=conversation_id)
      
+
+class LoadConversationsView(generics.ListAPIView):
+    serializer_class = ConversationSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['id']
+        # Filter conversations for the specific user
+        return Conversation.objects.filter(users__id=user_id)
+
+    def list(self, request, *args, **kwargs):
+        # Call get_queryset() to get the filtered queryset
+        queryset = self.get_queryset()
+
+        conversations_data = []
+
+        # Loop through each conversation to add additional data (e.g., last message preview)
+        for convo in queryset:
+            # Retrieve the most recent message for each conversation
+            last_message = Message.objects.filter(to_conversation_id=convo.id).order_by('-timestamp').first()
+            
+            # Prepare the preview and timestamp for each conversation
+            preview = last_message.content if last_message else "No messages yet"
+            timestamp = last_message.timestamp if last_message else None
+
+            conversations_data.append({
+                'conversation_id': convo.id,
+                'name': convo.name,
+                'preview': preview,
+                'timestamp': timestamp
+            })
+        
+        # Return the custom response with conversations data
+        return Response(conversations_data, status=status.HTTP_200_OK)
