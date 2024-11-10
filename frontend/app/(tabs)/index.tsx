@@ -79,7 +79,7 @@ export default function Map() {
         showsIndoors={false}
         showsMyLocationButton={false}
       >
-
+        
       </MapView>
     </View>
   );

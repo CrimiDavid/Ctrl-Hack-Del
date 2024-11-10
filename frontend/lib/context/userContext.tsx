@@ -1,32 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Region } from 'react-native-maps';
-
-export interface UserLocation {
-  city: string | null;
-  region: string | null;
-  country: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  latitudeDelta: number | null;
-  longitudeDelta: number | null;
-}
-
-interface UserState {
-  id: string;
-  name: string;
-  email: string;
-  location: UserLocation | null;
-  isLoadingLocation: boolean;
-}
-
-interface UserContextType {
-  user: UserState | null;
-  error: Error | null;
-  updateUser: (data: Partial<UserState>) => void;
-  initializeLocation: () => Promise<void>;
-}
+import * as Location from 'expo-location';
 
 // Create the global context that will store the user state within the app
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -112,7 +86,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function initializeUser() {
       try {
-        // REPLACE THIS WITH API CALL TO GET USER DATA
+        // FIXME: REPLACE THIS WITH API CALL TO GET USER DATA
         setUser(MOCK_USER_DATA);
         // Try to get cached location from device store
         const cachedLocation = await AsyncStorage.getItem('userLocation');

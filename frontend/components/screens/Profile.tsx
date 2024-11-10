@@ -1,95 +1,168 @@
-import * as React from 'react';
-import { View } from 'react-native';
-import Animated, { FadeInUp, FadeOutDown, LayoutAnimationConfig } from 'react-native-reanimated';
-import { Info } from '~/lib/icons/Info';
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
+import React from 'react';
+import { ScrollView, View, TextInput } from 'react-native';
+import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
-import { Progress } from '~/components/ui/progress';
 import { Text } from '~/components/ui/text';
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
+import { Input } from '~/components/ui/input';
+import { H3, H4 } from '~/components/ui/typography';
+import { Car, SunIcon } from 'lucide-react-native'
+import { useColorScheme } from '~/lib/useColorScheme';
+import { useUser } from '~/lib/context/userContext';
 
-const GITHUB_AVATAR_URI =
-  'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg';
+interface Event {
+  name: string;
+  date: string;
+  address: string;
+}
+
+interface Community {
+  community: string;
+  memberCount: number;
+}
+
+const getWeather = () => '27 degrees and sunny';
+const getEvents = () => [
+  { name: 'Community Cleanup', date: 'Today', address: '123 Main St' },
+  { name: 'Farmer\'s Market', date: 'Tomorrow', address: '456 Elm St' },
+];
+const getCommunities = () => [
+  { community: 'Local Running Club', memberCount: 200 },
+  { community: 'Neighborhood Watch', memberCount: 50 },
+];
+const handleAsk = (input: string) => {
+  // Handle asking about the input
+}
 
 export default function ProfileScreen() {
-  const [progress, setProgress] = React.useState(78);
+  const [askInput, setAskInput] = React.useState('');
+  const weather = getWeather(); // Assume this function exists
+  const events = getEvents(); // Assume this function exists
+  const communities = getCommunities(); // Assume this function exists
 
-  function updateProgressValue() {
-    setProgress(Math.floor(Math.random() * 100));
-  }
+  // Hooks
+  const { user } = useUser();
+  const { colorScheme } = useColorScheme();
+
   return (
-    <View className='flex-1 justify-center items-center gap-5 p-6 bg-secondary/30'>
-      <Card className='w-full max-w-sm p-6 rounded-2xl'>
-        <CardHeader className='items-center'>
-          <Avatar alt="Rick Sanchez's Avatar" className='w-24 h-24'>
-            <AvatarImage source={{ uri: GITHUB_AVATAR_URI }} />
-            <AvatarFallback>
-              <Text>RS</Text>
-            </AvatarFallback>
-          </Avatar>
-          <View className='p-3' />
-          <CardTitle className='pb-2 text-center'>Rick Sanchez</CardTitle>
-          <View className='flex-row'>
-            <CardDescription className='text-base font-semibold'>Scientist</CardDescription>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className='px-2 pb-0.5 active:opacity-50'>
-                <Info size={14} strokeWidth={2.5} className='w-4 h-4 text-foreground/70' />
-              </TooltipTrigger>
-              <TooltipContent className='py-2 px-4 shadow'>
-                <Text className='native:text-lg'>Freelance</Text>
-              </TooltipContent>
-            </Tooltip>
-          </View>
+    <ScrollView className="flex-1 bg-background p-4">
+      {/* Hello Message */}
+      <View className="flex-row items-center mb-4 ml-4">
+        <H3 className="text-3xl font-bold">Hello {user?.name} 👋</H3>
+      </View>
+
+      {/* Weather */}
+      <Card className="mb-4">
+        <CardHeader className="-mb-4">
+          <CardDescription>
+            Today's Weather Forecast:
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex-row items-center py-6">
+          <SunIcon color={colorScheme === 'dark' ? 'white' : 'black'} />
+          <Text className="text-lg"> {weather}</Text>
+        </CardContent>
+      </Card>
+
+      {/* Events Near You */}
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>Events Near You:</CardTitle>
         </CardHeader>
         <CardContent>
-          <View className='flex-row justify-around gap-3'>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Dimension</Text>
-              <Text className='text-xl font-semibold'>C-137</Text>
-            </View>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Age</Text>
-              <Text className='text-xl font-semibold'>70</Text>
-            </View>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Species</Text>
-              <Text className='text-xl font-semibold'>Human</Text>
-            </View>
+          <View className="min-h-[120px]">
+            {events && events.length > 0 ? (
+              <ScrollView className="max-h-[200px]">
+                {events.map((event: Event, index: number) => (
+                  <View
+                    key={index}
+                    className="flex-row justify-between items-center p-3 mb-2 bg-secondary rounded-lg"
+                  >
+                    <View className="flex-1">
+                      <Text className="font-semibold">{event.name}</Text>
+                      <Text className="text-muted-foreground">{event.date}</Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <Text className="text-muted-foreground">📍 {event.address}</Text>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            ) : (
+              <View className="flex-1 justify-center items-center">
+                <Text className="text-muted-foreground">No events found nearby</Text>
+              </View>
+            )}
           </View>
         </CardContent>
-        <CardFooter className='flex-col gap-3 pb-0'>
-          <View className='flex-row items-center overflow-hidden'>
-            <Text className='text-sm text-muted-foreground'>Productivity:</Text>
-            <LayoutAnimationConfig skipEntering>
-              <Animated.View
-                key={progress}
-                entering={FadeInUp}
-                exiting={FadeOutDown}
-                className='w-11 items-center'
-              >
-                <Text className='text-sm font-bold text-sky-600'>{progress}%</Text>
-              </Animated.View>
-            </LayoutAnimationConfig>
-          </View>
-          <Progress value={progress} className='h-2' indicatorClassName='bg-sky-600' />
-          <View />
-          <Button
-            variant='outline'
-            className='shadow shadow-foreground/5'
-            onPress={updateProgressValue}
-          >
-            <Text>Update</Text>
-          </Button>
-        </CardFooter>
       </Card>
-    </View>
+
+      {/* Ask About Community and Status */}
+      <View className="flex-row gap-4 mb-4">
+        <Card className="flex-1">
+          <CardHeader className="-mb-4">
+            <CardDescription>
+              Ask Anything Local:
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="py-4">
+            <Input
+              className="bg-secondary p-3 rounded-lg"
+              placeholder="Best pizza places..."
+              value={askInput}
+              onChangeText={setAskInput}
+              onSubmitEditing={() => handleAsk(askInput)}
+            />
+          </CardContent>
+        </Card>
+        <Card className="w-32">
+          <CardHeader className="-mb-4">
+            <CardDescription>
+              My Status
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="items-center justify-center py-4">
+            <Button
+              variant="ghost"
+              className="h-12 w-12"
+              onPress={() => {
+                // Handle status modal opening
+              }}
+            >
+              <Text className="text-2xl">😂</Text>
+            </Button>
+          </CardContent>
+        </Card>
+      </View>
+
+      {/* Communities Near Me */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Communities Near Me:</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <View className="min-h-[120px]">
+            {communities && communities.length > 0 ? (
+              <ScrollView className="max-h-[200px]">
+                {communities.map((community: Community, index: number) => (
+                  <View
+                    key={index}
+                    className="flex-row justify-between items-center p-3 mb-2 bg-secondary rounded-lg"
+                  >
+                    <Text className="font-semibold">{community.community}</Text>
+                    <Text className="text-muted-foreground">
+                      {community.memberCount} members
+                    </Text>
+                  </View>
+                ))}
+              </ScrollView>
+            ) : (
+              <View className="flex-1 justify-center items-center">
+                <Text className="text-muted-foreground">No communities found nearby</Text>
+              </View>
+            )}
+          </View>
+        </CardContent>
+      </Card>
+    </ScrollView>
   );
 }
