@@ -27,8 +27,11 @@ interface SelectedUsers {
 }
 
 import { useNavigation } from '@react-navigation/native';
+import {useUser} from "~/lib/context/userContext";
 
 export default function NewConversationModal({ visible, onClose }: NewConversationModalProps) {
+    const {user} = useUser()
+    const id = user?.id;
     const navigation = useNavigation();
     const [chats, setChats] = useState<Chat[]>([]);
     const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
@@ -50,7 +53,7 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
         setLoading(true);
         setError('');
         try {
-            const response = await axios.get('http://161.35.248.173:8000/api/listUsers/1/');
+            const response = await axios.get(`http://161.35.248.173:8000/api/listUsers/${id}/`);
             const chatsData = response.data.map((user: { first_name: string }, index: number) => ({
                 id: index.toString(),
                 first_name: user.first_name
@@ -82,7 +85,7 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
         console.log('Content:', content);
         const data = {
             conversation_name: name,
-            from_user_id: "1", // Replace with the actual user ID
+            from_user_id: id, // Replace with the actual user ID
             to_user_ids: selectedUsersList.map(user => user.id),
             content: content,
         };
