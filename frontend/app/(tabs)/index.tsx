@@ -2,8 +2,10 @@ import React, { Suspense, useEffect } from 'react';
 import MapView, { Marker, Polygon, PROVIDER_GOOGLE, Region, Geojson, MarkerPressEvent } from 'react-native-maps';
 import { StyleSheet, View, Text } from 'react-native';
 import { useUser } from '~/lib/context/userContext';
+import { useAuth } from '~/lib/context/authContext';
 import { ActivityIndicator } from 'react-native';
-import { getCommunityPins } from '~/lib/context/apiClient';
+import { getCommunityEventPins, getCommunityHousePins } from '~/lib/context/apiClient';
+import MapInfoModal from '~/components/screens/MapInfoModal';
 
 // This style removes most default map elements
 const BLANK_MAP_STYLE = [
@@ -47,44 +49,44 @@ const BLANK_MAP_STYLE = [
 export default function Map() {
   // Use hook to get the user
   const { user } = useUser();
+  const { userId } = useAuth();
   // Get the initial location from the user context
   const initialLocation = user?.location;
   // Create a reference to the map view
   const mapRef = React.useRef<MapView>(null);
 
-  const [communityPins, setCommunityPins] = React.useState<CommunityPin[]>([]);
+  const [communityPins, setCommunityPins] = React.useState<CommunityEventPin[]>([]);
+  const [communityHouses, setCommunityHouses] = React.useState<CommunityHousePin[]>([]);
+  const [selectedPin, setSelectedPin] = React.useState<CommunityEventPin | CommunityHousePin | null>(null);
+  const [modalType, setModalType] = React.useState<'event' | 'house'>('event');
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   useEffect(() => {
     if (user?.location) {
-      // Set the user's house pin
-      const userPin = {
-        id: "-1",
-        type: "Custom" as const,
-        description: "My House",
-        city: user.location.city,
-        region: user.location.region,
-        country: user.location.country,
-        latitude: user.location.latitude,
-        longitude: user.location.longitude,
-        latitudeDelta: 0.0015,
-        longitudeDelta: 0.0015
-      };
-  
       // Fetch community pins and combine with user pin
-      getCommunityPins()
-        .then(pins => {
-          setCommunityPins([userPin, ...pins]);
-        })
-        .catch(error => {
-          console.error('Failed to fetch community pins:', error);
-          // Still show user's pin even if community pins fail
-          setCommunityPins([userPin]);
-        });
+      refreshCommunityEvents();
+      refreshUserLocation();
     }
   }, [user?.location]); // Depend on user location
 
+  const refreshCommunityEvents = () => {
+    getCommunityEventPins()
+      .then(pins => {
+        console.log("Community Event Pins:", pins)
+        setCommunityPins(pins);
+      })
+  }
+
+  const refreshUserLocation = () => {
+    getCommunityHousePins(userId!)
+      .then(pins => {
+        console.log("Community House Pins:", pins)
+        setCommunityHouses(pins);
+      })
+  }
+
   // If the user is loading the location, show a loading spinner
-  if (!user || user.isLoadingLocation) {
+  if (!user || user.isLoadingLocation || !communityPins || !communityHouses) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" />
@@ -92,15 +94,16 @@ export default function Map() {
     );
   }
 
-  const onPressMarker = (event: MarkerPressEvent) => {
-    console.log(event);
-  }
+  const onPressMarker = (pin: CommunityEventPin | CommunityHousePin, type: 'event' | 'house') => {
+    setSelectedPin(pin);
+    setModalType(type);
+    setIsModalOpen(true);
+  };
 
   return (
     <View style={styles.container}>
       <MapView
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={initialLocation as Region}
         customMapStyle={BLANK_MAP_STYLE}
@@ -115,23 +118,63 @@ export default function Map() {
           })
         }}
       >
+        {user && user.location && user.location.latitude && user.location.longitude && (
+        <Marker
+          key="custom-house"
+          coordinate={{
+            latitude: user.location.latitude,
+            longitude: user.location.longitude,
+          }}
+        >
+          <View style={{ alignItems: 'center' }}>
+            <View>
+              <Text style={{ fontSize: 24 }}>📍</Text>
+            </View>
+            <Text>My House</Text>
+          </View>
+        </Marker>
+        )}
         {communityPins.map(pin => {
           // Only render markers with valid coordinates
           if (pin.latitude && pin.longitude) {
+            console.log('here')
             return (
               <Marker
-                key={pin.id}
+                key={'event-marker-' + pin.event_id}
                 coordinate={{
                   latitude: pin.latitude,
                   longitude: pin.longitude,
                 }}
-                onPress={onPressMarker}
+                onPress={() => onPressMarker(pin, 'event')}
               >
                 <View style={{ alignItems: 'center' }}>
                   <View>
                     <Text style={{ fontSize: 24 }}>📍</Text>
                   </View>
-                  <Text>{pin.description}</Text>
+                  <Text>{pin.event_name}</Text>
+                </View>
+              </Marker>
+            );
+          }
+          return null;
+        })}
+        {communityHouses.map(pin => {
+          // Only render markers with valid coordinates
+          if (pin.latitude && pin.longitude) {
+            return (
+              <Marker
+                key={'event-marker-' + pin.user_id}
+                coordinate={{
+                  latitude: pin.latitude,
+                  longitude: pin.longitude,
+                }}
+                onPress={() => onPressMarker(pin, 'house')}
+              >
+                <View style={{ alignItems: 'center' }}>
+                  <View>
+                    <Text style={{ fontSize: 24 }}>🏠</Text>
+                  </View>
+                  <Text>{pin.owner_first_name}</Text>
                 </View>
               </Marker>
             );
@@ -139,6 +182,15 @@ export default function Map() {
           return null;
         })}
       </MapView>
+      <MapInfoModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedPin(null);
+        }}
+        data={selectedPin}
+        type={modalType}
+      />
     </View>
   );
 }

@@ -51,8 +51,18 @@ interface SetAddressProps {
     onLocationUpdate: () => void;
 }
 
-interface CommunityPin extends UserLocation {
-    id: string;
-    type: "Custom" | "User" | "Event";
+interface CommunityEventPin extends UserLocation {
+    event_id: string;
+    event_name: string;
     description: string;
+    date: string;
+    owner_first_name: string;
+    owner_last_name: string;
+    users: string[];
+}
+
+interface CommunityHousePin extends UserLocation {
+    user_id: string;
+    owner_first_name: string;
+    owner_last_name: string;
 }

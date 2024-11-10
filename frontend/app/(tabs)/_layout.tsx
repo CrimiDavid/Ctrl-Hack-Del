@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "react-native-get-random-values"
 import { FontAwesome } from '@expo/vector-icons';
-import { Settings } from 'lucide-react-native'
+import { RefreshCcw, Settings, View } from 'lucide-react-native'
 import { useColorScheme } from '~/lib/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -19,6 +19,11 @@ export default function TabLayout() {
   const navigation = useNavigation();
   const { colorScheme } = useColorScheme();
   const { userId } = useAuth();
+  const [refresh, setRefresh] = useState(false);
+
+  const handleRefresh = () => {
+    setRefresh(prev => !prev);
+  };
 
   // If no token, redirect to auth
   if (!userId) {
@@ -54,9 +59,18 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => (
               <FontAwesome name="users" size={size} color={color} />
             ),
+            headerRight: () => (
+              <View style={{ marginRight: 24 }}>
+                <RefreshCcw 
+                  color={colorScheme === 'dark' ? 'white' : 'black'} 
+                  onPress={handleRefresh}
+                />
+              </View>
+            ),
           }}
-          component={Social}
-        />
+        >
+          {props => <Social {...props} refresh={refresh} />}
+        </Tabs.Screen>
         <Tabs.Screen
           name="profile"
           options={{
@@ -64,14 +78,13 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => (
               <FontAwesome name="user" size={size} color={color} />
             ),
-            headerRightContainerStyle: {
-              marginRight: 20,
-            },
             headerRight: () => (
-              <Settings 
-                color={colorScheme === 'dark' ? 'white' : 'black'} 
-                onPress={() => navigation.navigate('Settings' as never)}
-              />
+              <View style={{ marginRight: 24 }}>
+                <Settings 
+                  color={colorScheme === 'dark' ? 'white' : 'black'} 
+                  onPress={() => navigation.navigate('Settings' as never)}
+                />
+              </View>
             ),
           }}
           component={Profile}

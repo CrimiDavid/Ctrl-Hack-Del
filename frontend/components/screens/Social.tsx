@@ -6,7 +6,6 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter }
 import { useNavigation } from '@react-navigation/native';
 import { getCommunityEvents } from '~/lib/context/apiClient';
 import { useAuth } from '~/lib/context/authContext';
-import { RefreshCcw } from 'lucide-react-native';
 import { useColorScheme } from '~/lib/useColorScheme';
 
   const getCommunities = () => [
@@ -14,7 +13,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
     { community: 'Neighborhood Watch', memberCount: 50 },
   ];
 
-export default function Social() {
+export default function Social({ refresh }: { refresh: boolean }) {
     // Hooks / Context
     const { userId } = useAuth();
     const { colorScheme } = useColorScheme();
@@ -25,7 +24,7 @@ export default function Social() {
     useEffect(() => {
       // Fetch community events for the user
       getCommunityEvents(userId!).then((events) => setEvents(events));
-    }, []); 
+    }, [refresh]); 
 
     return (
       <View>
@@ -34,12 +33,6 @@ export default function Social() {
           <CardHeader>
             <CardTitle>
               <Text className='mr-8'>Events Near You:</Text>
-              <RefreshCcw 
-                color={colorScheme === 'dark' ? 'white' : 'black'}
-                className='ml-4'
-                size={16}
-                onPress={() => getCommunityEvents(userId!).then((events) => setEvents(events))}
-              />
             </CardTitle>
           </CardHeader>
           <CardContent>

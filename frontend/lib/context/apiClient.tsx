@@ -40,17 +40,22 @@ export const setUserLocation = async (userId: string, location: Partial<UserLoca
     return response.data;
 }
 
-export const getCommunityPins = async () => {
+export const getCommunityEventPins = async () => {
     // Endpoint for getting community pins
-    const endpoint = '/api/getCommunityPins/';
+    const endpoint = '/api/getAllEventLocations/';
     // GET request to get community pins
     const response = await apiClient.get(endpoint);
     // Return the response data
     return response.data;
 }
 
-export const getCommunityPin = async () => {
-
+export const getCommunityHousePins = async (userId: string) => {
+    // Endpoint for getting community house pins
+    const endpoint = `/api/getAllUserLocations/${userId}/`;
+    // GET request to get community house pins
+    const response = await apiClient.get(endpoint);
+    // Return the response data
+    return response.data;
 }
 
 export const getWeather = async () => {
@@ -96,3 +101,11 @@ export const getCommunity = async () => {
 
 }
 
+export const postJoinEvent = async (userId: string, eventId: string) => {
+    // Endpoint for joining an event
+    const endpoint = '/api/joinEvent/';
+    // POST request to join an event
+    const response = await apiClient.post(endpoint, {  user_id: userId, event_id: eventId });
+    // Return the response data
+    return response.data;
+}
