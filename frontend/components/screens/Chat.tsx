@@ -39,6 +39,8 @@ export default function Chat() {
     const navigation = useNavigation();
     const route = useRoute<ChatRouteProp>();
     const { conversation_id } = route.params;
+    console.log(id)
+
 
     // Function to fetch messages
     const fetchMessages = async () => {
@@ -46,14 +48,17 @@ export default function Chat() {
             const response = await axios.get(
                 `http://161.35.248.173:8000/api/getConversationMessages/${conversation_id}/`
             );
-            const fetchedMessages = response.data.map((msg: any) => ({
-                id: `${msg.from_user_id}-${Math.random()}`,
-                content: msg.content,
-                from_user_id: msg.from_user_id,
-                to_conversation_id: msg.to_conversation_id,
-                timestamp: msg.timestamp,
-                isSent: msg.from_user_id === id,
-            }));
+            const fetchedMessages = response.data.map((msg: any) => {
+                const fromUserId = Number(msg.from_user_id); // Ensure it's a number
+                return {
+                    id: `${fromUserId}-${Math.random()}`,
+                    content: msg.content,
+                    from_user_id: fromUserId,
+                    to_conversation_id: Number(msg.to_conversation_id),
+                    timestamp: msg.timestamp,
+                    isSent: fromUserId === id, // Accurate comparison
+                };
+            });
             setMessages(fetchedMessages.reverse());
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -68,7 +73,6 @@ export default function Chat() {
 
         // Set up interval to fetch messages every second
         const intervalId = setInterval(() => {
-            console.log("Its time")
             fetchMessages();
         }, 1000);
 
@@ -195,6 +199,7 @@ const styles = StyleSheet.create({
         padding: 16,
         flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: '#007AFF',
     },
     backButton: {
         marginRight: 'auto',
@@ -221,12 +226,12 @@ const styles = StyleSheet.create({
     },
     sentMessage: {
         alignSelf: 'flex-end',
-        backgroundColor: '#007AFF',
+        backgroundColor: '#007AFF', // Blue color for sent messages
         borderTopRightRadius: 0,
     },
     receivedMessage: {
         alignSelf: 'flex-start',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#FFFFFF', // White color for received messages
         borderTopLeftRadius: 0,
     },
     messageText: {
