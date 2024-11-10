@@ -1,4 +1,3 @@
-// Chat.tsx
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -14,13 +13,15 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import axios from 'axios';
-import {useUser} from "~/lib/context/userContext";
+import { useUser } from '~/lib/context/userContext';
 
 interface Message {
     id: string;
-    text: string;
+    content: string;
+    from_user_id: number;
+    to_conversation_id: number;
+    timestamp: string | null;
     isSent: boolean;
-    timestamp: string;
 }
 
 type RootStackParamList = {
@@ -30,8 +31,8 @@ type RootStackParamList = {
 type ChatRouteProp = RouteProp<RootStackParamList, 'Chat'>;
 
 export default function Chat() {
-    const {user} = useUser()
-    const id = user?.id;
+    const { user } = useUser();
+    const id = Number(user?.id); // Ensure id is a number
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState('');
     const [loading, setLoading] = useState<boolean>(true);
@@ -39,39 +40,61 @@ export default function Chat() {
     const route = useRoute<ChatRouteProp>();
     const { conversation_id } = route.params;
 
-    useEffect(() => {
-        const fetchMessages = async () => {
-            try {
-                const response = await axios.get(
-                    `http://161.35.248.173:8000/api/getConversationMessages/${id}/`
-                );
-                setMessages(response.data);
-            } catch (error) {
-                console.error('Error fetching messages:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Function to fetch messages
+    const fetchMessages = async () => {
+        try {
+            const response = await axios.get(
+                `http://161.35.248.173:8000/api/getConversationMessages/${conversation_id}/`
+            );
+            const fetchedMessages = response.data.map((msg: any) => ({
+                id: `${msg.from_user_id}-${Math.random()}`,
+                content: msg.content,
+                from_user_id: msg.from_user_id,
+                to_conversation_id: msg.to_conversation_id,
+                timestamp: msg.timestamp,
+                isSent: msg.from_user_id === id,
+            }));
+            setMessages(fetchedMessages.reverse());
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchMessages();
-    }, [conversation_id]);
+    // useEffect to fetch messages when component mounts and set up polling
+    useEffect(() => {
+        fetchMessages(); // Initial fetch
+
+        // Set up interval to fetch messages every second
+        const intervalId = setInterval(() => {
+            console.log("Its time")
+            fetchMessages();
+        }, 1000);
+
+        // Cleanup function to clear the interval when component unmounts
+        return () => clearInterval(intervalId);
+    }, [conversation_id, id]);
 
     const sendMessage = async () => {
         if (inputText.trim()) {
             const newMessage: Message = {
-                id: Date.now().toString(),
-                text: inputText.trim(),
-                isSent: true,
+                id: `${id}-${Date.now()}`,
+                content: inputText.trim(),
+                from_user_id: id,
+                to_conversation_id: conversation_id,
                 timestamp: new Date().toISOString(),
+                isSent: true,
             };
 
             try {
-                await axios.post('http://your_api_endpoint/api/sendMessage/', {
-                    conversation_id,
-                    text: inputText.trim(),
-                    sender_id: 1, // Replace with actual user ID
+                await axios.post('http://161.35.248.173:8000/api/sendMessage/', {
+                    content: inputText.trim(),
+                    from_user_id: id,
+                    to_conversation_id: conversation_id,
                 });
 
+                // Update the local state to include the new message
                 setMessages((prevMessages) => [newMessage, ...prevMessages]);
                 setInputText('');
             } catch (error) {
@@ -93,14 +116,16 @@ export default function Chat() {
                     item.isSent ? styles.sentMessageText : styles.receivedMessageText,
                 ]}
             >
-                {item.text}
+                {item.content}
             </Text>
-            <Text style={styles.timestamp}>
-                {new Date(item.timestamp).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                })}
-            </Text>
+            {item.timestamp && (
+                <Text style={styles.timestamp}>
+                    {new Date(item.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    })}
+                </Text>
+            )}
         </View>
     );
 
@@ -125,7 +150,7 @@ export default function Chat() {
                     >
                         <Text style={styles.backButtonText}>Back</Text>
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Chat</Text>
+                    <Text style={styles.headerText}></Text>
                 </View>
 
                 <FlatList
@@ -196,22 +221,22 @@ const styles = StyleSheet.create({
     },
     sentMessage: {
         alignSelf: 'flex-end',
-        backgroundColor: '#DCF8C6',
+        backgroundColor: '#007AFF',
+        borderTopRightRadius: 0,
     },
     receivedMessage: {
         alignSelf: 'flex-start',
         backgroundColor: '#FFFFFF',
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
+        borderTopLeftRadius: 0,
     },
     messageText: {
         fontSize: 16,
     },
     sentMessageText: {
-        color: '#000',
+        color: '#FFFFFF',
     },
     receivedMessageText: {
-        color: '#000',
+        color: '#000000',
     },
     timestamp: {
         fontSize: 12,
@@ -224,7 +249,6 @@ const styles = StyleSheet.create({
         padding: 16,
         borderTopWidth: 1,
         borderTopColor: '#E0E0E0',
-        backgroundColor: '#F9F9F9',
     },
     input: {
         flex: 1,

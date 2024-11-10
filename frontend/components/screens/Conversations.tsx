@@ -63,7 +63,7 @@
 
         const handleConversationPress = (conversationId: number) => {
             // @ts-ignore
-            navigation.navigate('Chat'``, { conversation_id: conversationId });
+            navigation.navigate('Chat', { conversation_id: conversationId });
         };
 
         const getPaginatedData = () => {
