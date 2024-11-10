@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import generics, status
 from .models import Location, Address, User, Message, Conversation
 from .serializers import LocationSerializer, AddressSerializer, UserSerializer, MessageSerializer, ConversationSerializer
+from django.contrib.auth import authenticate
 
 
 # Create your views here.
@@ -118,4 +119,26 @@ class CreateConversationView(generics.CreateAPIView):
         # Serialize and return the response
         serializer = self.get_serializer(message)
         return Response(status=status.HTTP_201_CREATED)
-     
+        
+
+class LoginView(generics.ListAPIView):
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get("username")
+        password = request.data.get("password")
+    
+        # Check if both username and password are provided
+        if not username or not password:
+            return Response({"error": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Authenticate the user using Django's built-in method
+        user = authenticate(request, username=username, password=password)
+
+        # If authentication is successful
+        if user is not None:
+        
+            # Return the user's ID or any other data you want to return
+            return Response({"user_id": user.id}, status=status.HTTP_200_OK)
+        
+        # If authentication fails
+        return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
