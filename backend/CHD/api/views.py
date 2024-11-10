@@ -234,6 +234,8 @@ class GetUserInfoView(generics.ListAPIView):
             "longitude_delta": 0.1
         }
         else:
+            location = UserRefs.objects.filter(user_id=user).first().location_id
+            
             user_info = {
             "user_id": user.id,
             "first_name": user.first_name,
