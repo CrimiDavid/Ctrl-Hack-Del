@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
-from .models import Location, Address, User, Message, Conversation
-from .serializers import LocationSerializer, AddressSerializer, UserSerializer, MessageSerializer, ConversationSerializer
+refrom .models import Location, User, Message, Conversation
+from .serializers import UserSerializer, MessageSerializer, ConversationSerializer
 from django.contrib.auth import authenticate
 
 
@@ -118,21 +118,25 @@ class CreateConversationView(generics.CreateAPIView):
         # Serialize and return the response
         serializer = self.get_serializer(message)
         
-#Address and Location Views
-class SetAddressView(generics.ListAPIView):
+
+class SetLocationView(generics.ListAPIView):
     
     def post(self, request, *args, **kwargs):
         city = request.data.get("city")
         country = request.data.get("country")
-        postal_code = request.data.get("postal_code")
+        region = request.data.get("region")
+        latitude = request.data.get("latitude")
+        longitude = request.data.get("longitude")
+        latitude_delta = request.data.get("latitude_delta")
+        longitude_delta = request.data.get("longitude_delta")
         
         
-        if not city or not country or not postal_code:
-                return Response({"error": "city, country, and postal_code are requied fields."},
+        if not city or not country or not region or not latitude or not longitude or not latitude_delta or not longitude_delta:
+            return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
                 
-        address = Address(city=city, country=country, postal_code=postal_code)
-        address.save()
+        location = Location(city=city, country=country, region=region, latitude=latitude, longitude=longitude, latitude_delta=latitude_delta, longitude_delta=longitude_delta)
+        location.save()
         
         return Response(status=status.HTTP_201_CREATED)
         
