@@ -234,3 +234,38 @@ class GetUserInfoView(generics.ListAPIView):
         
         # Return the custom response with conversations data
         return Response(user_info, status=status.HTTP_200_OK)
+    
+
+
+class GetAvailableEventsView(generics.ListAPIView):
+
+    def get_queryset(self):
+        user_id = self.kwargs['id']
+        return Event.objects.exclude(users__id=user_id)
+    
+    def list(self, request, *args, **kwargs):
+        events = self.get_queryset()
+
+        events_info = []
+
+        for event in events:
+            location = Location.objects.get(id=event.location_id.id)
+            owner = User.objects.get(id=event.owner_id.id)
+
+            events_info.append({
+                "event_id": event.id,
+                "owner_first_name": owner.first_name,
+                "owner_last_name": owner.last_name,
+                "name": event.name,
+                "description": event.description,
+                "date": event.date,
+                "users": event.users.all(),
+                "city": location.city,
+                "region": location.region,
+                "country": location.country,
+            })
+
+        return Response(events_info, status=status.HTTP_200_OK)
+
+
+        

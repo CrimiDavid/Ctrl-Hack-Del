@@ -11,5 +11,6 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name=''),
     path('setUserLocation/', views.SetUserLocationView.as_view(), name=''),
     path('createEvent/', views.CreateEventView.as_view(), name=''),
-    path('getUserInfo/<str:id>/', views.GetUserInfoView.as_view(), name='get_user_info')
+    path('getUserInfo/<str:id>/', views.GetUserInfoView.as_view(), name=''),
+    path('getAvailableEvents/<str:id>/', views.GetAvailableEventsView.as_view(), name=''),
 ]
