@@ -3,5 +3,6 @@ backend/venv
 .cxncatignore
 output.txt
 backend/CHD/api/__pycache__/
-.pyc
-.__pycache__
+*.pyc
+__pycache__/
+
