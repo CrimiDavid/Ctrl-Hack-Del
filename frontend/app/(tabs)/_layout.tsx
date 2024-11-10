@@ -20,9 +20,14 @@ export default function TabLayout() {
   const { colorScheme } = useColorScheme();
   const { userId } = useAuth();
   const [refresh, setRefresh] = useState(false);
+  const [refreshMap, setRefreshMap] = useState(false);
 
   const handleRefresh = () => {
     setRefresh(prev => !prev);
+  };
+
+  const handleRefreshMap = () => {
+    setRefreshMap(prev => !prev);
   };
 
   // If no token, redirect to auth
@@ -39,9 +44,18 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => (
               <FontAwesome name="map" size={size} color={color} />
             ),
+            headerRight: () => (
+              <View style={{ marginRight: 24 }}>
+                <RefreshCcw 
+                  color={colorScheme === 'dark' ? 'white' : 'black'} 
+                  onPress={handleRefreshMap}
+                />
+              </View>
+            ),
           }}
-          component={Map}
-        />
+        >
+          {props => <Map {...props} refresh={refresh} />}
+        </Tabs.Screen>
         <Tabs.Screen
           name="messages"
           options={{

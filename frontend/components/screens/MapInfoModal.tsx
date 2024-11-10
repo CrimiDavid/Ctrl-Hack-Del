@@ -28,6 +28,7 @@ export default function MapInfoModal({ isOpen, onClose, data, type }: MapInfoMod
   if (!data) return null;
   const { userId } = useAuth();
   const renderEventContent = (event: CommunityEventPin) => {
+    console.log(event.date)
     const handleJoinEvent = async () => {
       try {
         // Call your API to join the event

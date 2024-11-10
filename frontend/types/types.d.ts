@@ -21,6 +21,7 @@ interface UserContextType {
     user: UserState | null;
     error: Error | null;
     updateUser: (data: Partial<UserState>) => void;
+    initializeUser: () => void;
 }
 
 interface AuthState {

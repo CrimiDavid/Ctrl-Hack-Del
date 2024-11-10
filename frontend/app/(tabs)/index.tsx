@@ -46,10 +46,10 @@ const BLANK_MAP_STYLE = [
   }
 ];
 
-export default function Map() {
+export default function Map({ refresh }: { refresh: boolean }) {
   // Use hook to get the user
-  const { user } = useUser();
-  const { userId } = useAuth();
+  const { user, initializeUser } = useUser();
+  const { userId, signIn } = useAuth();
   // Get the initial location from the user context
   const initialLocation = user?.location;
   // Create a reference to the map view
@@ -64,10 +64,11 @@ export default function Map() {
   useEffect(() => {
     if (user?.location) {
       // Fetch community pins and combine with user pin
+      initializeUser();
       refreshCommunityEvents();
       refreshUserLocation();
     }
-  }, [user?.location]); // Depend on user location
+  }, [userId, refresh]); // Depend on user location
 
   const refreshCommunityEvents = () => {
     getCommunityEventPins()
@@ -137,7 +138,6 @@ export default function Map() {
         {communityPins.map(pin => {
           // Only render markers with valid coordinates
           if (pin.latitude && pin.longitude) {
-            console.log('here')
             return (
               <Marker
                 key={'event-marker-' + pin.event_id}
