@@ -221,6 +221,7 @@ class GetUserInfoView(generics.ListAPIView):
        
         if location is None:
             user_info = {
+            "user_id": user,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
@@ -234,6 +235,7 @@ class GetUserInfoView(generics.ListAPIView):
         }
         else:
             user_info = {
+            "user_id": user,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
