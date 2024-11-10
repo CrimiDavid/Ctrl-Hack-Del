@@ -325,7 +325,7 @@ class GetAllEventLocationsView(generics.ListAPIView):
                 "country": location.country,
                 "region": location.region,
                 "latitude": location.latitude,
-                "longiitude": location.longitude,
+                "longitude": location.longitude,
                 "latitude_delta": location.latitude_delta,
                 "longitude_delta": location.longitude_delta
             })
@@ -359,49 +359,11 @@ class GetAllUserLocationsView(generics.ListAPIView):
                 "country": location.country,
                 "region": location.region,
                 "latitude": location.latitude,
-                "longiitude": location.longitude,
+                "longitude": location.longitude,
                 "latitude_delta": location.latitude_delta,
                 "longitude_delta": location.longitude_delta
             })
 
         return Response(user_locations, status=status.HTTP_200_OK)
-    
-    # def list2(self, request, *args, **kwargs):
-    #     user_refs = self.get_queryset2()
-    
-    #     for user in user_refs:
-    #         location = UserRefs.objects.get(id=user.location_id.id)
-    #         user = User.objects.get(id=user.user_id)
-    #         user_location_info = {
-    #             "user_id": user.user_id,
-    #             "user_name "
-    #             "city": location.city,
-    #             "country": location.country,
-    #             "region": location.region,
-    #             "latitude": location.latitude,
-    #             "longiitude": location.longitude,
-    #             "latitude_delta": location.latitude_delta,
-    #             "longitude_delta": location.longitude_delta
-    #         }
-        
-    #     return events_location_info
-        
-    #     queryset1 = Event.objects.exclude(users_id=user_id)
-    #     for event in queryset1:
-    #         location = Location.objects.get(id=queryset)
-    #         combined_data.append({
-    #             "event.id": item.id,
-    #             "name": item.name,  # Replace with actual fields of Model1
-    #             "countr": item.field2
-    #         })
-        
-    #     queryset2 = UserRefs.objects.exclude(user_id=user_id)
-    #     for item in queryset2:
-    #         combined_data.append({
-    #             "id": item.id,
-    #             "fieldA": item.fieldA,  # Replace with actual fields of Model2
-    #             "fieldB": item.fieldB
-    #         })
-    
         
         
