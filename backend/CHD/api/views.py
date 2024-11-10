@@ -44,3 +44,12 @@ class SendMessageView(generics.CreateAPIView):
         # Serialize the response
         serializer = self.get_serializer(message)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class GetConversationMessagesView(generics.ListAPIView):
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        conversation_id = self.kwargs['id']
+        return Message.objects.filter(to_conversation_id=conversation_id)
+     
