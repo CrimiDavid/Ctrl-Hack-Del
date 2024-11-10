@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
-refrom .models import Location, User, Message, Conversation
+from .models import Location, User, Message, Conversation
 from .serializers import UserSerializer, MessageSerializer, ConversationSerializer
 from django.contrib.auth import authenticate
 
