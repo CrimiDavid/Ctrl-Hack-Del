@@ -12,6 +12,7 @@ import { createCommunityEvent } from '~/lib/context/apiClient';
 import { useNavigation } from '@react-navigation/native';
 import { cn } from '~/lib/utils';
 import { useUser } from '~/lib/context/userContext';
+import { useAuth } from '~/lib/context/authContext';
 
 interface CreateEventProps {
   onSuccess: () => void;
@@ -20,6 +21,7 @@ interface CreateEventProps {
 export default function CreateEvent({ onSuccess }: CreateEventProps) {
     const navigation = useNavigation();
     const { user } = useUser();
+    const { userId } = useAuth();
     const { isDarkColorScheme } = useColorScheme();
     const [eventName, setEventName] = useState('');
     const [eventDate, setEventDate] = useState(new Date());
@@ -68,14 +70,14 @@ export default function CreateEvent({ onSuccess }: CreateEventProps) {
             event_name: eventName,
             date: eventDate.toISOString(),
             description: description,
-            owner_id: user?.id,
+            owner_id: userId,
             city: location.city,
             region: location.region,
             country: location.country,
             latitude: location.latitude,
             longitude: location.longitude,
-            latidideDelta: 0,
-            longitudeDelta: 0,
+            latitude_delta: 1,
+            longitude_delta: 1,
         });
         // Callback to parent component
         onSuccess();

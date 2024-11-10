@@ -27,7 +27,7 @@ export default function ProfileScreen() {
     <ScrollView className="flex-1 bg-background p-4">
       {/* Hello Message */}
       <View className="flex-row items-center mb-4 ml-4">
-        <H3 className="text-3xl font-bold">Hello {user?.name} 👋</H3>
+        <H3 className="text-3xl font-bold">Hello {user?.firstName} 👋</H3>
       </View>
 
       {/* Weather */}

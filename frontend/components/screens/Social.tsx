@@ -1,29 +1,46 @@
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView } from "react-native";
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '~/components/ui/card';
 import { useNavigation } from '@react-navigation/native';
+import { getCommunityEvents } from '~/lib/context/apiClient';
+import { useAuth } from '~/lib/context/authContext';
+import { RefreshCcw } from 'lucide-react-native';
+import { useColorScheme } from '~/lib/useColorScheme';
 
-const getEvents = () => [
-    { name: 'Community Cleanup', date: 'Today', address: '123 Main St' },
-    { name: 'Farmer\'s Market', date: 'Tomorrow', address: '456 Elm St' },
-  ];
   const getCommunities = () => [
     { community: 'Local Running Club', memberCount: 200 },
     { community: 'Neighborhood Watch', memberCount: 50 },
   ];
 
 export default function Social() {
+    // Hooks / Context
+    const { userId } = useAuth();
+    const { colorScheme } = useColorScheme();
     const navigation = useNavigation();
-    const events = getEvents(); // Assume this function exists
     const communities = getCommunities(); // Assume this function exists
+    const [events, setEvents] = useState<MapEvent[]>([]);
+
+    useEffect(() => {
+      // Fetch community events for the user
+      getCommunityEvents(userId!).then((events) => setEvents(events));
+    }, []); 
 
     return (
       <View>
         {/* Events Near You */}
         <Card className="mb-4">
           <CardHeader>
-            <CardTitle>Events Near You:</CardTitle>
+            <CardTitle>
+              <Text className='mr-8'>Events Near You:</Text>
+              <RefreshCcw 
+                color={colorScheme === 'dark' ? 'white' : 'black'}
+                className='ml-4'
+                size={16}
+                onPress={() => getCommunityEvents(userId!).then((events) => setEvents(events))}
+              />
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <View className="min-h-[120px]">
@@ -60,7 +77,7 @@ export default function Social() {
         {/* Communities Near Me */}
         <Card>
           <CardHeader>
-            <CardTitle>Communities Near Me:</CardTitle>
+            <CardTitle>Communities Near You:</CardTitle>
           </CardHeader>
           <CardContent>
             <View className="min-h-[120px]">

@@ -5,12 +5,15 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { Card } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
+import { useUser } from '~/lib/context/userContext';
 import { setUserLocation } from '~/lib/context/apiClient';
+import { useAuth } from '~/lib/context/authContext';
 import { cn } from '~/lib/utils';
 
 export default function SetAddress({ onLocationUpdate }: SetAddressProps) {
+    const { user } = useUser();
+    const { userId } = useAuth();
     const { isDarkColorScheme } = useColorScheme();
-    
     const [location, updateLocation] = useState<Partial<UserLocation>>({});
 
     function extractLocationInfo(details: GooglePlaceDetail): Partial<UserLocation> {
@@ -57,18 +60,10 @@ export default function SetAddress({ onLocationUpdate }: SetAddressProps) {
     };
 
     const handleUpdateLocation = async () => {
-        // Update the user's location in the database
-        await setUserLocation({ 
-          city: location.city ?? null,
-          region: location.region ?? null,
-          country: location.country ?? null,
-          latitude: location.latitude ?? null,
-          longitude: location.longitude ?? null,
-          latitudeDelta: 0.0922, 
-          longitudeDelta: 0.0421 
-        });
-        // Call the parent function to update the UI
-        onLocationUpdate();
+      // Update the user's location in the database
+      await setUserLocation(userId!, location);
+      // Call the parent function to update the UI
+      onLocationUpdate();
     }
 
     // Check if we have all required location fields

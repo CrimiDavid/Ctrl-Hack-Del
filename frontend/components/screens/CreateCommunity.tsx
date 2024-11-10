@@ -69,14 +69,17 @@ export default function CreateCommunity({ onSuccess }: CreateCommunityProps) {
 
     const handleCreateCommunity = async () => {
         // Update the community in the database
-        // await createCommunity({
-        //     name: communityName,
-        //     description: description,
-        //     region: location.region ?? '',
-        //     country: location.country ?? '',
-        //     latitude: location.latitude ?? 0,
-        //     longitude: location.longitude ?? 0,
-        // });
+        await createCommunity({
+            name: communityName,
+            description: description,
+            city: '',
+            region: location.region ?? '',
+            country: location.country ?? '',
+            latitude: location.latitude ?? 0,
+            longitude: location.longitude ?? 0,
+            latitudeDelta: 0,
+            longitudeDelta: 0,
+        });
         // Callback to parent component
         onSuccess();
         // Navigate back to the previous screen

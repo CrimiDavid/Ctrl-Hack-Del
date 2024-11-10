@@ -10,7 +10,8 @@ interface UserLocation {
   
 interface UserState {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     username: string;
     location: UserLocation | null;
     isLoadingLocation: boolean;
@@ -20,7 +21,6 @@ interface UserContextType {
     user: UserState | null;
     error: Error | null;
     updateUser: (data: Partial<UserState>) => void;
-    initializeLocation: () => Promise<void>;
 }
 
 interface AuthState {
@@ -49,4 +49,10 @@ interface MapCommunity {
 
 interface SetAddressProps {
     onLocationUpdate: () => void;
+}
+
+interface CommunityPin extends UserLocation {
+    id: string;
+    type: "Custom" | "User" | "Event";
+    description: string;
 }
