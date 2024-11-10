@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -43,5 +44,6 @@ class Event(models.Model):
     owner_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_events")
     name = models.CharField(max_length=200)
     description = models.TextField()
+    date = models.DateTimeField(default=timezone.now)
     users = models.ManyToManyField(User, related_name="event")
     location_id = models.ForeignKey(Location, on_delete=models.CASCADE)

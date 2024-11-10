@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -177,24 +178,31 @@ class LoginView(generics.ListAPIView):
 class CreateEventView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
-        user_id = request.data.get("user_id")
+        owner_id = request.data.get("owner_id")
+        date = request.data.get("date")
         event_name = request.data.get("event_name")
         description = request.data.get("description")
-        location_id = request.data.get("location_id")
+        city = request.data.get("city")
+        region = request.data.get("region")
+        country = request.data.get("country")
+        latitude = request.data.get("latitude")
+        longitude = request.data.get("longitude")
+        latitude_delta = request.data.get("latitude_delta")
+        longitude_delta = request.data.get("longitude_delta")
 
-        if not user_id or not event_name or not description or not location_id:
+        if not owner_id or not date or not event_name or not description or not city or not region or not country or not latitude or not longitude or not latitude_delta or not longitude_delta:
             return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
-
-
         try:
-            user_id = User.objects.get(id=user_id)
-            location_id = Location.objects.get(id=location_id)
-        except (User.DoesNotExist, Conversation.DoesNotExist):
-            return Response({"error": "Invalid from_user_id or to_conversation_id."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        event = Event.objects.create(owner_id=user_id, name=event_name, description=description, location_id=location_id)
+            owner_id = User.objects.get(id=owner_id)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid from_owner_id"},
+                            status=status.HTTP_400_BAD_REQUEST) 
+        
+        date = datetime.fromisoformat(date.replace("Z", "+00:00"))
+        location = Location(city=city, country=country, region=region, latitude=latitude, longitude=longitude, latitude_delta=latitude_delta, longitude_delta=longitude_delta)
+        location.save()
+        event = Event.objects.create(owner_id=owner_id, date=date, name=event_name, description=description, location_id=location)
 
         return Response(status=status.HTTP_201_CREATED)
 
