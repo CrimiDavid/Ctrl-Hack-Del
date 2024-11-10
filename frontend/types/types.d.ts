@@ -11,7 +11,7 @@ interface UserLocation {
 interface UserState {
     id: string;
     name: string;
-    email: string;
+    username: string;
     location: UserLocation | null;
     isLoadingLocation: boolean;
 }
@@ -31,8 +31,8 @@ interface AuthState {
 interface AuthContextType {
     userId: string | null;
     isLoading: boolean;
-    signIn: (email: string, password: string) => Promise<void>;
-    signUp: (name: string, email: string, password: string) => Promise<void>;
+    signIn: (username: string, password: string) => Promise<void>;
+    signUp: (name: string, username: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
 }
 

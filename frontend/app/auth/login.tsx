@@ -9,7 +9,7 @@ import { useAuth } from '~/lib/context/authContext';
 
 export default function Login() {
   // State for form inputs
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -24,7 +24,7 @@ export default function Login() {
       setIsLoading(true);
       setError('');
       // Attempt to sign in
-      await signIn(email, password);
+      await signIn(username, password);
       // Redirect to home on success
       router.replace('/');
     }
@@ -43,11 +43,10 @@ export default function Login() {
           <Text className="text-2xl font-bold text-center mb-6">Welcome Back 🤝</Text>
           <View className="space-y-4">
             <Input
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
               autoCapitalize="none"
-              keyboardType="email-address"
               className="mb-4"
             />
             <Input
@@ -60,7 +59,7 @@ export default function Login() {
 
             {error ? <Text className="text-destructive text-sm mb-4">{error}</Text> : null}
 
-            <Button onPress={handleLogin} disabled={isLoading || !email || !password}>
+            <Button onPress={handleLogin} disabled={isLoading || !username || !password}>
               {isLoading ? (
                 <ActivityIndicator color="white" />
               ) : (

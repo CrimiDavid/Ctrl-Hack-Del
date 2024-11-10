@@ -21,7 +21,7 @@ const MOCK_USER_LOCATION: UserLocation = {
 const MOCK_USER_DATA: UserState = {
   id: '1',
   name: 'Will Siddeley',
-  email: 'will.email@gmail.com',
+  username: 'will.username@gmail.com',
   location: MOCK_USER_LOCATION,
   isLoadingLocation: true,
 };

@@ -35,12 +35,30 @@ export const getWeather = async () => {
 
 }
 
+export const createCommunityEvent = async (eventData: object) => {
+    // Endpoint for creating a community event
+    const endpoint = '/api/createEvent';
+    // POST request to create a community event
+    const response = await apiClient.post(endpoint, eventData);
+    // Return the response data
+    return response.data;
+}
+
 export const getCommunityEvents = async () => {
 
 }
 
 export const getCommunityEvent = async () => {
 
+}
+
+export const createCommunity = async (communityData: object) => {
+    // Endpoint for creating a community
+    const endpoint = '/api/createCommunity';
+    // POST request to create a community
+    const response = await apiClient.post(endpoint, communityData);
+    // Return the response data
+    return response.data;
 }
 
 export const getCommunities = async () => {

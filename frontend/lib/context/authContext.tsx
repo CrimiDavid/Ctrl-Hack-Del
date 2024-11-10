@@ -63,10 +63,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     userId: state.userId,
     isLoading: state.isLoading,
     // The sign-in function
-    signIn: async (email: string, password: string) => {
+    signIn: async (username: string, password: string) => {
       try {
         // Make a POST request to the login endpoint
-        const response = await apiClient.post('/api/login/', { "username": email, password });
+        const response = await apiClient.post('/api/login/', { "username": username, password });
         // Get the userId and user from the response
         const { user_id } = response.data;
         // Store the userId in AsyncStorage
@@ -79,14 +79,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       catch (error) {
         console.error(error);
         // Throw an error if the login fails
-        throw new Error('Invalid email or password');
+        throw new Error('Invalid username or password');
       }
     },
     // The sign-up function
-    signUp: async (name: string, email: string, password: string) => {
+    signUp: async (name: string, username: string, password: string) => {
       try {
         // Make a POST request to the register endpoint
-        const response = await apiClient.post('/api/register', { name, email, password });
+        const response = await apiClient.post('/api/register', { name, username, password });
         // Get the userId and user from the response
         const { userId, user } = response.data;
         // Store the userId in AsyncStorage

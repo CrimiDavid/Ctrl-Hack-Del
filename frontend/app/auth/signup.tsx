@@ -10,7 +10,7 @@ import { useState } from 'react';
 export default function Register() {
   // State for form inputs
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,7 +25,7 @@ export default function Register() {
       setIsLoading(true);
       setError('');
       // Attempt to sign up
-      await signUp(name, email, password);
+      await signUp(name, username, password);
       // Redirect to home on success
       router.replace('/');
     }
@@ -50,11 +50,10 @@ export default function Register() {
               className="mb-4"
             />
             <Input
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
               autoCapitalize="none"
-              keyboardType="email-address"
               className="mb-4"
             />
             <Input
@@ -67,7 +66,7 @@ export default function Register() {
 
             {error ? <Text className="text-destructive text-sm">{error}</Text> : null}
 
-            <Button onPress={handleRegister} disabled={isLoading || !name || !email || !password}>
+            <Button onPress={handleRegister} disabled={isLoading || !name || !username || !password}>
               {isLoading ? (
                 <ActivityIndicator color="white" />
               ) : (
