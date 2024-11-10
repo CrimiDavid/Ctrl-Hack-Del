@@ -274,14 +274,6 @@ class JoinEventView(generics.CreateAPIView):
         
         return Response({"message": "User added to event successfully"},
                         status=status.HTTP_200_OK)
-        
-        
-        
-        
-        
-        
-    
-
 
 class GetAvailableEventsView(generics.ListAPIView):
 
@@ -313,5 +305,71 @@ class GetAvailableEventsView(generics.ListAPIView):
 
         return Response(events_info, status=status.HTTP_200_OK)
 
-
+class GetAllLocations(generics.ListAPIView):
+    
+    # def get_queryset(self):
+    #     user_id = self.kwargs['id']
+    #     return Event.objects.all()
+    
+    def list(self, request, *args, **kwargs):
+        events = Event.objects.all()
+        
+        for event in events:
+            location = Location.objects.get(id=event.location_id.id)
+            events_location_info = {
+                "event_name": event.name,
+                "city": location.city,
+                "country": location.country,
+                "region": location.region,
+                "latitude": location.latitude,
+                "longiitude": location.longitude,
+                "latitude_delta": location.latitude_delta,
+                "longitude_delta": location.longitude_delta
+            }
+            print(events_location_info)
+        
+        return Response(events_location_info)
+    
+    # def get_queryset2(self):
+    # user_id = self.kwargs['id']
+    # return Event.objects.exclude(users__id=user_id)
+    
+    # def list2(self, request, *args, **kwargs):
+    #     user_refs = self.get_queryset2()
+    
+    #     for user in user_refs:
+    #         location = UserRefs.objects.get(id=user.location_id.id)
+    #         user = User.objects.get(id=user.user_id)
+    #         user_location_info = {
+    #             "user_id": user.user_id,
+    #             "user_name "
+    #             "city": location.city,
+    #             "country": location.country,
+    #             "region": location.region,
+    #             "latitude": location.latitude,
+    #             "longiitude": location.longitude,
+    #             "latitude_delta": location.latitude_delta,
+    #             "longitude_delta": location.longitude_delta
+    #         }
+        
+    #     return events_location_info
+        
+    #     queryset1 = Event.objects.exclude(users_id=user_id)
+    #     for event in queryset1:
+    #         location = Location.objects.get(id=queryset)
+    #         combined_data.append({
+    #             "event.id": item.id,
+    #             "name": item.name,  # Replace with actual fields of Model1
+    #             "countr": item.field2
+    #         })
+        
+    #     queryset2 = UserRefs.objects.exclude(user_id=user_id)
+    #     for item in queryset2:
+    #         combined_data.append({
+    #             "id": item.id,
+    #             "fieldA": item.fieldA,  # Replace with actual fields of Model2
+    #             "fieldB": item.fieldB
+    #         })
+    
+        
         
