@@ -135,6 +135,14 @@ class SetUserLocationView(generics.ListAPIView):
             return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
                 
+        
+        # Validate that the from_user_id and to_conversation_id are valid user IDs
+        try:
+            user_id = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid from_user_id"}, status=status.HTTP_400_BAD_REQUEST)
+
+                
         location = Location(city=city, country=country, region=region, latitude=latitude, longitude=longitude, latitude_delta=latitude_delta, longitude_delta=longitude_delta)
         location.save()
         
@@ -178,4 +186,14 @@ class CreateEventView(generics.CreateAPIView):
             return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
 
+
+        try:
+            user_id = User.objects.get(id=user_id)
+            location_id = Location.objects.get(id=location_id)
+        except (User.DoesNotExist, Conversation.DoesNotExist):
+            return Response({"error": "Invalid from_user_id or to_conversation_id."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         event = Event.objects.create(owner_id=user_id, name=event_name, description=description, location_id=location_id)
+
+        return Response(status=status.HTTP_201_CREATED)
