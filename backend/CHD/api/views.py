@@ -16,15 +16,12 @@ class ListUsersView(generics.ListAPIView):
         return User.objects.exclude(id=excluded_id)
      
 class SendMessageView(generics.CreateAPIView):
-    serializer_class = MessageSerializer
     
     def post(self, request, *args, **kwargs):
         content = request.data.get("content")
         from_user_id = request.data.get("from_user_id")
         to_conversation_id = request.data.get("to_conversation_id")
-        print(content)
-        print(from_user_id)
-        print(to_conversation_id)
+
         if not content or not from_user_id or not to_conversation_id:
             return Response({"error": "content, from_user_id, and to_conversation_id are required fields."},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -51,8 +48,8 @@ class GetConversationMessagesView(generics.ListAPIView):
 
     def get_queryset(self):
         conversation_id = self.kwargs['id']
-        return Message.objects.filter(to_conversation_id=conversation_id)
-     
+        return Message.objects.filter(to_conversation_id=conversation_id)    
+
 
 class LoadConversationsView(generics.ListAPIView):
     serializer_class = ConversationSerializer
@@ -86,3 +83,41 @@ class LoadConversationsView(generics.ListAPIView):
         
         # Return the custom response with conversations data
         return Response(conversations_data, status=status.HTTP_200_OK)
+
+class CreateConversationView(generics.CreateAPIView):
+    serializer_class = MessageSerializer
+    
+    def post(self, request, *args, **kwargs):
+        content = request.data.get("content")
+        from_user_id = request.data.get("from_user_id")
+        to_user_ids = request.data.get("to_user_ids")  # List of user IDs to include in the conversation
+        conversation_name = request.data.get("conversation_name")
+
+        # Check if all required fields are provided
+        if not content or not from_user_id or not to_user_ids or not conversation_name:
+            return Response({"error": "content, from_user_id, to_user_ids, and conversation_name are required fields."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate the users
+        try:
+            from_user = User.objects.get(id=from_user_id)
+            to_users = User.objects.filter(id__in=to_user_ids)
+            if to_users.count() != len(to_user_ids):
+                return Response({"error": "One or more user IDs are invalid."},
+                                status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid from_user_id."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Create the conversation
+        conversation = Conversation.objects.create(name=conversation_name)
+        conversation.users.add(from_user, *to_users)  # Add all users to the conversation
+
+        # Create the message in the newly created conversation
+        message = Message(content=content, from_user_id=from_user, to_conversation_id=conversation)
+        message.save()
+
+        # Serialize and return the response
+        serializer = self.get_serializer(message)
+        return Response(status=status.HTTP_201_CREATED)
+     
