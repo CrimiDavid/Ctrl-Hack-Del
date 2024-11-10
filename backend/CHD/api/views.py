@@ -38,9 +38,7 @@ class SendMessageView(generics.CreateAPIView):
         message = Message(content=content, from_user_id=from_user_id, to_conversation_id=to_conversation_id)
         message.save()
 
-        # Serialize the response
-        serializer = self.get_serializer(message)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class GetConversationMessagesView(generics.ListAPIView):
