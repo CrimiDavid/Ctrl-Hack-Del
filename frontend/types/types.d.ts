@@ -6,7 +6,7 @@ interface UserLocation {
     longitude: number | null;
     latitudeDelta: number | null;
     longitudeDelta: number | null;
-  }
+}
   
 interface UserState {
     id: string;

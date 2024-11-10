@@ -10,16 +10,17 @@ const apiClient = axios.create({
 
 export default apiClient;
 
-export const setUserAddress = async () => {
-
-}
-
 export const getUserLocation = async () => {
 
 }
 
 export const setUserLocation = async (location: UserLocation) => {
-    console.log(location)
+    // Endpoint for updating user location
+    const endpoint = '/api/setAddress';
+    // POST request to update user location
+    const response = await apiClient.post(endpoint, location);
+    // Return the response data
+    return response.data;
 }
 
 export const getCommunityPins = async () => {

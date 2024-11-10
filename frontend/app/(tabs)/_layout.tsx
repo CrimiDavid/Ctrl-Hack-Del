@@ -1,9 +1,5 @@
 import React from 'react';
 import { FontAwesome } from '@expo/vector-icons';
-<<<<<<< Updated upstream
-import 'react-native-gesture-handler';
-
-=======
 import { Settings } from 'lucide-react-native'
 import { useColorScheme } from '~/lib/useColorScheme';
 import { useNavigation } from '@react-navigation/native';
@@ -14,7 +10,6 @@ import Profile from './profile';
 import "react-native-get-random-values"
 
 const Tabs = createBottomTabNavigator();
->>>>>>> Stashed changes
 
 export default function TabLayout() {
   
