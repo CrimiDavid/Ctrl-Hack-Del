@@ -197,3 +197,32 @@ class CreateEventView(generics.CreateAPIView):
         event = Event.objects.create(owner_id=user_id, name=event_name, description=description, location_id=location_id)
 
         return Response(status=status.HTTP_201_CREATED)
+
+class getUserInfoView(generics.ListAPIView):
+
+    def get_queryset(self):
+        user_id = self.kwargs['id']
+        # Filter conversations for the specific user
+        return User.objects.get(id=user_id)
+
+    def list(self, request, *args, **kwargs):
+        # Call get_queryset() to get the filtered queryset
+        user = self.get_queryset()
+
+        location = UserRefs.objects.filter(user_id=user).first().location_id
+        
+        user_info = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "city": location.city,
+            "country": location.country,
+            "region": location.region,
+            "latitude": location.latitude,
+            "longitude": location.longitude,
+            "latitude_delta": location.latitude_delta,
+            "longitude_delta": location.longitude_delta
+        }
+        
+        # Return the custom response with conversations data
+        return Response(user_info, status=status.HTTP_200_OK)

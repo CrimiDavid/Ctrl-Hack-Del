@@ -10,5 +10,6 @@ urlpatterns = [
     path('loadConversations/<str:id>/', views.LoadConversationsView.as_view(), name=''),
     path('login/', views.LoginView.as_view(), name=''),
     path('setUserLocation/', views.SetUserLocationView.as_view(), name=''),
-    path('createEvent/', views.CreateEventView.as_view(), name='')
+    path('createEvent/', views.CreateEventView.as_view(), name=''),
+    path('getUserInfo/<str:id>/', views.getUserInfoView.as_view(), name='get_user_info')
 ]
