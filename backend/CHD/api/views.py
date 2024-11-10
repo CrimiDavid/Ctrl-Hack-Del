@@ -217,9 +217,23 @@ class GetUserInfoView(generics.ListAPIView):
         # Call get_queryset() to get the filtered queryset
         user = self.get_queryset()
 
-        location = UserRefs.objects.filter(user_id=user).first().location_id
-        
-        user_info = {
+        location = UserRefs.objects.filter(user_id=user).first()
+       
+        if location is None:
+            user_info = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "city": "Toronto",
+            "country": "Canada",
+            "region": "Ontario",
+            "latitude": 43.77345349999999,
+            "longitude": -79.50186839999999,
+            "latitude_delta": 0.1,
+            "longitude_delta": 0.1
+        }
+        else:
+            user_info = {
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
@@ -231,7 +245,8 @@ class GetUserInfoView(generics.ListAPIView):
             "latitude_delta": location.latitude_delta,
             "longitude_delta": location.longitude_delta
         }
-        
+            
+
         # Return the custom response with conversations data
         return Response(user_info, status=status.HTTP_200_OK)
     
