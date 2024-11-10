@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
-from .models import Location, User, Message, Conversation
+from .models import Location, User, Message, Conversation, UserRefs, Event
 from .serializers import UserSerializer, MessageSerializer, ConversationSerializer
 from django.contrib.auth import authenticate
 
@@ -163,8 +163,17 @@ class LoginView(generics.ListAPIView):
         return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class CreateEventView(generics.CreateAPIView):
+class CreateEventView(generics.CreateAPIView):
     
-#     def get_queryset(self):
-#         user_id = self.kwargs['id']
-#         location_id
+    def post(self, request, *args, **kwargs):
+        user_id = request.data.get("user_id")
+        event_name = request.data.get("event_name")
+        description = request.data.get("description")
+        location_id = request.data.get("location_id")
+        
+        if not user_id or not event_name or not description or not location_id:
+            return Response({"error": "one or more missing fields"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        event = Event.objects.create(owner_id=user_id, name=event_name, description=description, location_id=location_id)
+        

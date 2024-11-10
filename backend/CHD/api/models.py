@@ -22,24 +22,17 @@ class Message(models.Model):
     
 
 class Location(models.Model):
-    
-
-    def __str__(self):
-        return f"Location: {self.latitude}, {self.longitude}"
-
-
-class Location(models.Model):
-    city = models.CharField(max_length=200)
-    country = models.CharField(max_length=200)
-    region = models.CharField(max_length=200)
+    city = models.CharField(max_length=200, default="")
+    country = models.CharField(max_length=200, default="")
+    region = models.CharField(max_length=200, default="")
     latitude = models.FloatField()
     longitude = models.FloatField()
     latitude_delta = models.FloatField()
     longitude_delta = models.FloatField()
 
     def __str__(self):
-        return f"Location: {self.city}"
-    
+        return f"Location: {self.latitude}, {self.longitude}"
+
 
 class UserRefs(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -47,6 +40,7 @@ class UserRefs(models.Model):
 
 
 class Event(models.Model):
+    owner_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_events")
     name = models.CharField(max_length=200)
     description = models.TextField()
     users = models.ManyToManyField(User, related_name="event")
