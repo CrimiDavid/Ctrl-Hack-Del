@@ -118,9 +118,10 @@ class CreateConversationView(generics.CreateAPIView):
         return Response(status=status.HTTP_201_CREATED)        
         
 
-class SetLocationView(generics.ListAPIView):
+class SetUserLocationView(generics.ListAPIView):
     
     def post(self, request, *args, **kwargs):
+        user_id = request.data.get("user_id")
         city = request.data.get("city")
         country = request.data.get("country")
         region = request.data.get("region")
@@ -130,12 +131,15 @@ class SetLocationView(generics.ListAPIView):
         longitude_delta = request.data.get("longitude_delta")
         
         
-        if not city or not country or not region or not latitude or not longitude or not latitude_delta or not longitude_delta:
+        if not user_id or not city or not country or not region or not latitude or not longitude or not latitude_delta or not longitude_delta:
             return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
                 
         location = Location(city=city, country=country, region=region, latitude=latitude, longitude=longitude, latitude_delta=latitude_delta, longitude_delta=longitude_delta)
         location.save()
+        
+        userRefs = UserRefs(user_id=user_id, location_id=location)
+        userRefs.save()
         
         return Response(status=status.HTTP_201_CREATED)
         
@@ -161,19 +165,17 @@ class LoginView(generics.ListAPIView):
         
         # If authentication fails
         return Response({"error": "Invalid username or password"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CreateEventView(generics.CreateAPIView):
     
+class CreateEventView(generics.CreateAPIView):
+
     def post(self, request, *args, **kwargs):
         user_id = request.data.get("user_id")
         event_name = request.data.get("event_name")
         description = request.data.get("description")
         location_id = request.data.get("location_id")
-        
+
         if not user_id or not event_name or not description or not location_id:
             return Response({"error": "one or more missing fields"},
                             status=status.HTTP_400_BAD_REQUEST)
 
         event = Event.objects.create(owner_id=user_id, name=event_name, description=description, location_id=location_id)
-        

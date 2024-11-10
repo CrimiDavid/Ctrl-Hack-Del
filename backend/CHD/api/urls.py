@@ -9,5 +9,7 @@ urlpatterns = [
     path('createConversation/', views.CreateConversationView.as_view(), name=''),
     path('loadConversations/<str:id>/', views.LoadConversationsView.as_view(), name=''),
     path('login/', views.LoginView.as_view(), name=''),
-    path('setUserLocation/', views.SetLocationView.as_view(), name='')
+    path('setUserLocation/', views.SetUserLocationView.as_view(), name=''),
+    
+    path('createEvents/', views.CreateEventView.as_view(), name='')
 ]
