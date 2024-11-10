@@ -21,14 +21,23 @@ interface Chat {
     first_name: string;
 }
 
+interface SelectedUsers {
+    [key: string]: boolean;
+}
+
+import { useNavigation } from '@react-navigation/native';
+
 export default function NewConversationModal({ visible, onClose }: NewConversationModalProps) {
+    const navigation = useNavigation();
     const [chats, setChats] = useState<Chat[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
     useEffect(() => {
         if (visible) {
             fetchChats();
+            setSelectedUsers({}); // Reset selections when modal opens
         }
     }, [visible]);
 
@@ -50,15 +59,37 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
         }
     };
 
+    const toggleUserSelection = (userId: string) => {
+        setSelectedUsers(prev => ({
+            ...prev,
+            [userId]: !prev[userId]
+        }));
+    };
+
+    const getSelectedUsersCount = () => {
+        return Object.values(selectedUsers).filter(Boolean).length;
+    };
+
+    const handleStartConversation = () => {
+        const selectedUsersList = chats.filter(chat => selectedUsers[chat.id]);
+        console.log('Starting conversation with:', selectedUsersList);
+        navigation.navigate('Chat' as never);
+        onClose();
+    };
+
     const renderChatItem = ({ item }: { item: Chat }) => (
         <TouchableOpacity
             style={styles.chatItem}
-            onPress={() => {
-                console.log('Selected chat:', item);
-                onClose();
-            }}
+            onPress={() => toggleUserSelection(item.id)}
         >
-            <Text style={styles.chatTitle}>{item.first_name}</Text>
+            <View style={styles.chatItemContent}>
+                <View style={styles.checkbox}>
+                    {selectedUsers[item.id] && (
+                        <FontAwesome name="check" size={16} color="#007AFF" />
+                    )}
+                </View>
+                <Text style={styles.chatTitle}>{item.first_name}</Text>
+            </View>
             <FontAwesome name="angle-right" size={20} color="#666" />
         </TouchableOpacity>
     );
@@ -73,7 +104,6 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <Text style={styles.modalTitle}>New Conversation</Text>
-
                     {loading ? (
                         <ActivityIndicator size="large" color="#0000ff" />
                     ) : error ? (
@@ -84,14 +114,29 @@ export default function NewConversationModal({ visible, onClose }: NewConversati
                             </TouchableOpacity>
                         </View>
                     ) : (
-                        <FlatList
-                            data={chats}
-                            renderItem={renderChatItem}
-                            keyExtractor={(item) => item.id}
-                            style={styles.chatList}
-                            contentContainerStyle={styles.chatListContent}
-                            showsVerticalScrollIndicator={false}
-                        />
+                        <>
+                            <FlatList
+                                data={chats}
+                                renderItem={renderChatItem}
+                                keyExtractor={(item) => item.id}
+                                style={styles.chatList}
+                                contentContainerStyle={styles.chatListContent}
+                                showsVerticalScrollIndicator={false}
+                            />
+
+                            {getSelectedUsersCount() > 0 && (
+                                <View style={styles.footer}>
+                                    <TouchableOpacity
+                                        style={styles.startButton}
+                                        onPress={handleStartConversation}
+                                    >
+                                        <Text style={styles.startButtonText}>
+                                            Start Conversation ({getSelectedUsersCount()})
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </>
                     )}
 
                     <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -153,6 +198,20 @@ const styles = StyleSheet.create({
         borderBottomColor: '#eee',
         width: '100%'
     },
+    chatItemContent: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    checkbox: {
+        width: 24,
+        height: 24,
+        borderWidth: 2,
+        borderColor: '#007AFF',
+        borderRadius: 12,
+        marginRight: 12,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     chatTitle: {
         fontSize: 16,
         color: '#333'
@@ -172,5 +231,24 @@ const styles = StyleSheet.create({
     },
     retryText: {
         color: 'white'
+    },
+    footer: {
+        width: '100%',
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+        marginTop: 10
+    },
+    startButton: {
+        backgroundColor: '#007AFF',
+        padding: 12,
+        borderRadius: 8,
+        width: '100%',
+        alignItems: 'center'
+    },
+    startButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '600'
     }
 });

@@ -10,6 +10,7 @@ import {
     StyleSheet,
     SafeAreaView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 
 interface Message {
     id: string;
@@ -21,6 +22,7 @@ interface Message {
 function Chat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState('');
+    const navigation = useNavigation(); // Initialize navigation
 
     const sendMessage = () => {
         if (inputText.trim()) {
@@ -54,6 +56,12 @@ function Chat() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Text style={styles.backButtonText}>Back</Text>
+                </TouchableOpacity>
+            </View>
+
             <FlatList
                 data={messages}
                 renderItem={renderMessage}
@@ -93,9 +101,18 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
+        flexDirection: 'row',
+        alignItems: 'center',
         padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
+    },
+    backButton: {
+        marginLeft: 'auto',
+        marginRight: 10,
+        padding: 8,
+    },
+    backButtonText: {
+        color: '#007AFF',
+        fontSize: 16,
     },
     headerText: {
         fontSize: 18,

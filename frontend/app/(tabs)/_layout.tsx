@@ -1,6 +1,8 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
+import 'react-native-gesture-handler';
+
 
 export default function TabLayout() {
 
