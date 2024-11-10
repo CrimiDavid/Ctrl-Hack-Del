@@ -70,15 +70,7 @@ export default function ProfileScreen() {
             </CardDescription>
           </CardHeader>
           <CardContent className="items-center justify-center py-4">
-            <Button
-              variant="ghost"
-              className="h-12 w-12"
-              onPress={() => {
-                // Handle status modal opening
-              }}
-            >
-              <Text className="text-2xl">😂</Text>
-            </Button>
+            <Text className="text-2xl">😃</Text>
           </CardContent>
         </Card>
       </View>

@@ -148,7 +148,7 @@ export default function Map({ refresh }: { refresh: boolean }) {
               >
                 <View style={{ alignItems: 'center' }}>
                   <View>
-                    <Text style={{ fontSize: 24 }}>📍</Text>
+                    <Text style={{ fontSize: 24 }}>{pin.users.includes(user.firstName) ? "📍🟢" : "📍"}</Text>
                   </View>
                   <Text>{pin.event_name}</Text>
                 </View>

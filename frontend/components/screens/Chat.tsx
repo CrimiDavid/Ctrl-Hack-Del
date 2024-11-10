@@ -14,6 +14,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import axios from "axios";
 import { useUser } from "~/lib/context/userContext";
+import { red } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 
 interface Message {
   id: string;
@@ -115,7 +116,7 @@ export default function Chat() {
         item.isSent ? styles.sentMessage : styles.receivedMessage,
       ]}
     >
-      <Text>{item.sender_first_name}</Text>
+      <Text className="text-red-500 text-xl">{item.sender_first_name}</Text>
       <Text
         style={[
           styles.messageText,
@@ -201,11 +202,11 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#007AFF",
   },
   backButton: {
     marginRight: "auto",
     padding: 8,
+    
   },
   backButtonText: {
     color: "#FFFFFF",
@@ -229,16 +230,20 @@ const styles = StyleSheet.create({
   sentMessage: {
     alignSelf: "flex-end",
     backgroundColor: "#007AFF", // Blue color for sent messages
+    borderWidth: 1,
+    borderColor: "#000000",
     borderTopRightRadius: 0,
   },
   receivedMessage: {
     alignSelf: "flex-start",
     backgroundColor: "#FFFFFF", // White color for received messages
+    borderWidth: 1,
+    borderColor: "#000000",
     borderTopLeftRadius: 0,
   },
   messageText: {
     fontSize: 16,
-  },
+    },
   sentMessageText: {
     color: "#FFFFFF",
   },
