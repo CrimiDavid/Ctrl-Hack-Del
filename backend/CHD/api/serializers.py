@@ -10,7 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ["content", "from_user_id", "to_conversation_id", "timestamp"]
+        fields = ["content", "from_user_id", "to_conversation_id", "timestamp", "sender_first_name"]
+
+
 
 
 class ConversationSerializer(serializers.ModelSerializer):

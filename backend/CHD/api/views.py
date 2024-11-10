@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
 from .models import Location, User, Message, Conversation, UserRefs, Event
-from .serializers import UserSerializer, MessageSerializer, ConversationSerializer
+from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
 from django.contrib.auth import authenticate
 
 
@@ -48,8 +48,29 @@ class GetConversationMessagesView(generics.ListAPIView):
 
     def get_queryset(self):
         conversation_id = self.kwargs['id']
+
         return Message.objects.filter(to_conversation_id=conversation_id)    
 
+    def list(self, request, *args, **kwargs):
+        messages = self.get_queryset()
+
+        res_messages = []
+        for message in messages:
+
+            sender = User.objects.get(id=message.from_user_id.id)
+            print(sender.first_name)
+
+            res_messages.append({
+                "content": message.content,
+                "from_user_id": message.from_user_id.id,
+                "to_conversation_id": message.to_conversation_id.id,
+                "timestamp": message.timestamp,
+                "sender_first_name": sender.first_name
+            })
+        
+        print(res_messages)
+
+        return Response(res_messages, status=status.HTTP_200_OK)
 
 class LoadConversationsView(generics.ListAPIView):
     serializer_class = ConversationSerializer
