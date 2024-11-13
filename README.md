@@ -1,5 +1,11 @@
 # Together
 
+<img src="./screenshots/map.jpeg" width="200">
+<img src="./screenshots/event.jpeg" width="200">
+<img src="./screenshots/social.jpeg" width="200">
+<img src="./screenshots/messages.jpeg" width="200">
+<img src="./screenshots/group.jpeg" width="200">
+
 ## 💡 Inspiration
 In today's world, it's kind of ironic - we're more connected than ever through social media, yet many of us barely know our neighbors. This hit home when we realized that despite living in the same neighborhood for years, we were more likely to get restaurant recommendations from strangers on Instagram than from the person living next door.
 
