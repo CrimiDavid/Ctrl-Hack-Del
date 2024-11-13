@@ -14,13 +14,10 @@ In today's world, it's kind of ironic - we're more connected than ever through s
 The lightbulb moment came during a conversation about how our parents and grandparents talk about the "good old days" when neighborhoods were real communities. They knew their neighbors, kids played together in the streets, and there was this genuine sense of belonging. We started wondering: could we use technology to bring back that community feeling, but in a way that fits our modern lives?
 We also noticed some real problems that better neighborhood connections could solve:
 
-That time when someone's car got broken into, and nobody knew who to alert
-
-The local food bank that needed volunteers, but couldn't reach enough people
-
-Community events that only spread through word of mouth, missing half the neighborhood
-
-New families moving in who felt isolated because they didn't know anyone
+- That time when someone's car got broken into, and nobody knew who to alert
+- The local food bank that needed volunteers, but couldn't reach enough people
+- Community events that only spread through word of mouth, missing half the neighborhood
+- New families moving in who felt isolated because they didn't know anyone
 
 Plus, with more people working from home and spending time in their local areas, there's never been a better time to strengthen neighborhood bonds. We wanted to create something that would make it easy and natural to be part of your local community - no awkward door knocking required.
 
