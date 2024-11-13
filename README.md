@@ -1,11 +1,11 @@
 # Together
 
 <div>
-  <img src="./screenshots/map.jpeg" width="180">
-  <img src="./screenshots/event.jpeg" width="180">
-  <img src="./screenshots/social.jpeg" width="180">
-  <img src="./screenshots/messages.jpeg" width="180">
-  <img src="./screenshots/group.jpeg" width="180">
+  <img src="./screenshots/map.jpeg" width="160">
+  <img src="./screenshots/event.jpeg" width="160">
+  <img src="./screenshots/social.jpeg" width="160">
+  <img src="./screenshots/messages.jpeg" width="160">
+  <img src="./screenshots/group.jpeg" width="160">
 </div>
 
 ## 💡 Inspiration
